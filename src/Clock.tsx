@@ -2,6 +2,7 @@ import React from 'react';
 
 class Clock extends React.Component<{ name: string }, { date: Date }> {
     interval: ReturnType<typeof setInterval> = null as any;
+
     constructor(props: { name: string }) {
         super(props);
         this.state = { date: new Date() };

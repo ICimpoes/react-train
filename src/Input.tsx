@@ -17,6 +17,7 @@ class Input extends React.Component<InputProps, InputState> {
     onChange(e: React.ChangeEvent<HTMLInputElement>) {
         this.props.onChange(e.target.value);
     }
+
     render(): React.ReactNode {
         return (<input onChange={this.onChange}></input>);
     }

@@ -2,14 +2,20 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders hello Vasea text', () => {
+test('renders Hello, Vasea text', () => {
   render(<App name="Vasea"/>);
-  const helloElement = screen.getByText(/hello Vasea/i);
+  const helloElement = screen.getByText(/Hello, Vasea/i);
   expect(helloElement).toBeInTheDocument();
 });
 
-test('renders hello stranger when name is empty', () => {
+test('renders Hello, stranger when name is not set', () => {
+  render(<App/>);
+  const helloElement = screen.getByText(/Hello, stranger/i);
+  expect(helloElement).toBeInTheDocument();
+});
+
+test('renders Hello, stranger when name is empty', () => {
   render(<App name=""/>);
-  const helloElement = screen.getByText(/hello stranger/i);
+  const helloElement = screen.getByText(/Hello, stranger/i);
   expect(helloElement).toBeInTheDocument();
 });

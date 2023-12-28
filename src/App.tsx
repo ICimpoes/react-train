@@ -5,8 +5,9 @@ import './Clock'
 import Clock from './Clock';
 import Input from './Input';
 
-function App(prop: { name: string }) {
+function App(prop: { name?: string }) {
     const [name, setName] = useState(prop.name);
+
     return (
         <div className="App">
             <header className="App-header">
@@ -19,8 +20,8 @@ function App(prop: { name: string }) {
     );
 }
 
-function greeting(name: string) {
-    return name !== "" ? name: "stranger";
+function greeting(name?: string) {
+    return name && name !== "" ? name: "stranger";
 }
 
 export default App;
