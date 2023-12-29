@@ -1,18 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
+import * as React from "react";
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          hello world!
-        </p>
-      </header>
-    </div>
-  );
-}
+export default class App extends React.Component {
+    public render(): JSX.Element {
+        return (
+            <div className="editor">
+                <div className="palette">
+                    <div className="shape">
+                        <svg width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                            <use xlinkHref="assets/shapes.svg#square" />
+                        </svg>
+                    </div>
+                    <div className="shape">
+                        <svg width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <use xlinkHref="assets/shapes.svg#circle" />
+                        </svg>
+                    </div>
+                    <div className="shape">
+                        <svg width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <use xlinkHref="assets/shapes.svg#triangle" />
+                        </svg>
+                    </div>
+                </div>
 
-export default App;
+                <div className="workspace">
+                    <svg className="canvas" viewBox="0 0 1200 600" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    </svg>
+                </div>
+            </div>
+        );
+    }
+}
