@@ -6,22 +6,19 @@ import { useAppDispatch, useAppSelector } from './redux/hooks'
 function List() {
     const [todoItems, setTodoItems] = useState<Array<TodoItem>>([]);
     const todoList = useAppSelector(todoSelector);
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         setTodoItems(todoList);
     }, [todoList]);
 
     const renderItems = (items: TodoItem[]): JSX.Element[] => {
-        let result: JSX.Element[] = [];
-        for (const item of items) {
-            result.push(Item(item, (id: number) => { dispatch(removeItem(id)) }));
-        }
-        return result
+        return items.map((item) => {
+            return <Item key={item.id} item={item}/>
+        });
     }
 
     return (<table><tbody>
-        {NewTask()}
+        <NewTask />
         {renderItems(todoItems)}
     </tbody></table>)
 }

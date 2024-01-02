@@ -1,16 +1,17 @@
-import { TodoItem } from './redux/todo_store'
+import { useAppDispatch } from './redux/hooks';
+import { removeItem, TodoItem } from './redux/todo_store'
 
-function Item(props: TodoItem, dispatch: (id: number) => void) {
+function Item(props: {item: TodoItem}) {
     return (
-        <tr key={props.id}>
-            <td>{props.title}</td><td>{DeleteButton(props.id, dispatch)}</td>
+        <tr>
+            <td>{props.item.title}</td><td><DeleteButton id={props.item.id}/></td>
         </tr>);
 }
 
-function DeleteButton(id: number, dispatch: (id: number) => void) {
+function DeleteButton(props: {id: number}) {
+    const dispatch = useAppDispatch();
     const deleteItem = (e: React.MouseEvent) => {
-        dispatch(id);
-        console.log("delete", id);
+        dispatch(removeItem(props.id));
     }
     return (<button onClick={deleteItem}>X</button>)
 }
