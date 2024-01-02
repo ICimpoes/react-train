@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import Item from './Item'
-import { todoSelector, addItem, TodoItem, removeItem, } from './redux/todo_store'
+import { todoSelector, addItem, TodoItem } from './redux/todo_store'
 import { useAppDispatch, useAppSelector } from './redux/hooks'
 
 function List() {
-    const [todoItems, setTodoItems] = useState<Array<TodoItem>>([]);
+    const [_, setTodoItems] = useState<Array<TodoItem>>([]);
     const todoList = useAppSelector(todoSelector);
 
     useEffect(() => {
         setTodoItems(todoList);
     }, [todoList]);
 
-    const renderItems = (items: TodoItem[]): JSX.Element[] => {
-        return items.map((item) => {
-            return <Item key={item.id} item={item}/>
-        });
-    }
-
     return (<table><tbody>
         <NewTask />
-        {renderItems(todoItems)}
+        {todoList.map((item) => {
+            return <Item key={item.id} item={item}/>
+        })}
     </tbody></table>)
 }
 
