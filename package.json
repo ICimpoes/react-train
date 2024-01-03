@@ -2,6 +2,7 @@
   "name": "react-train",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://icimpoes.github.io/react-train",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -22,7 +23,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build -b deploy"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.1.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^8.56.0",
