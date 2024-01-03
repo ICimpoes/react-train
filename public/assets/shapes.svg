@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <rect id="square" x="5" y="5" width="40" height="40" />
+    <circle id="circle" cx="25" cy="25" r="20" />
+    <polygon id="triangle" points="7,40 24,7 43,40" />
+</svg>
