@@ -27,7 +27,9 @@ module.exports = {
         sourceType: "module",
     },
     plugins: ["@typescript-eslint", "react", "prettier"],
-    rules: {},
+    rules: {
+        "@typescript-eslint/no-unused-vars": "error",
+    },
     settings: {
         react: {
             version: "detect",
