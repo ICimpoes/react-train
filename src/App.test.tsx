@@ -1,43 +1,42 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import {
+    getAllByTestId,
+    getByTestId,
+    render,
+    screen,
+} from "@testing-library/react";
 import App from "./App";
 
 describe("<App />", () => {
-    const app = (): HTMLElement => {
-        const { container } = render(<App />);
-        return container;
-    };
+    beforeEach(() => {
+        render(<App />);
+    });
 
     describe("#render", () => {
-        it("does not crash", () => {
-            app();
-            expect(screen).toBeDefined();
-        });
-
         it("has editor", () => {
-            const editor = app().getElementsByClassName("editor");
+            const editor = screen.getByTestId("editor");
 
-            expect(editor.length).toBe(1);
+            expect(editor).toBeDefined();
         });
     });
 
     describe("editor", () => {
-        const editor = (): Element => {
-            return app().getElementsByClassName("editor")[0];
+        const editor = (): HTMLElement => {
+            return screen.getByTestId("editor");
         };
 
         it("has palette", () => {
-            const palette = editor().getElementsByClassName("palette");
+            const palette = getByTestId(editor(), "palette");
 
-            expect(palette).toHaveLength(1);
+            expect(palette).toBeDefined();
 
-            const shapes = palette[0].getElementsByClassName("shape");
+            const shapes = getAllByTestId(palette, "shape");
 
             expect(shapes).toHaveLength(3);
         });
 
         it("has workspace", () => {
-            const workspace = editor().getElementsByClassName("workspace");
+            const workspace = getAllByTestId(editor(), "workspace");
 
             expect(workspace).toHaveLength(1);
         });

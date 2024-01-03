@@ -4,9 +4,9 @@ import "./App.css";
 export default class App extends React.Component {
     public render(): JSX.Element {
         return (
-            <div className="editor">
-                <div className="palette">
-                    <div className="shape">
+            <div data-testid="editor" className="editor">
+                <div data-testid="palette" className="palette">
+                    <div data-testid="shape" className="shape">
                         <svg
                             width="50"
                             height="50"
@@ -17,7 +17,7 @@ export default class App extends React.Component {
                             <use xlinkHref="assets/shapes.svg#square" />
                         </svg>
                     </div>
-                    <div className="shape">
+                    <div data-testid="shape" className="shape">
                         <svg
                             width="50"
                             height="50"
@@ -27,7 +27,7 @@ export default class App extends React.Component {
                             <use xlinkHref="assets/shapes.svg#circle" />
                         </svg>
                     </div>
-                    <div className="shape">
+                    <div data-testid="shape" className="shape">
                         <svg
                             width="50"
                             height="50"
@@ -39,7 +39,7 @@ export default class App extends React.Component {
                     </div>
                 </div>
 
-                <div className="workspace">
+                <div data-testid="workspace" className="workspace">
                     <svg
                         className="canvas"
                         viewBox="0 0 1200 600"
