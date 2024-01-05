@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./App.css";
-import Editor from "./editor/Editor";
+import Editor from "./Editor";
 
 export default class App extends React.Component {
     public render(): JSX.Element {
