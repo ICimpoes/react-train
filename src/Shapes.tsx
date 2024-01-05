@@ -66,13 +66,13 @@ function triangle(
     y: number,
     setDragItem?: (e: Draggable) => void
 ): React.JSX.Element {
-    const calculatePosition = (x: number, y: number): string => {
+    const calculatePoints = (x: number, y: number): string => {
         return `${x - 20},${y + 20} ${x},${y - 20} ${x + 20},${y + 20}`;
     };
 
     const drag = (element: SVGPolygonElement) => {
         return (x: number, y: number) => {
-            element.setAttributeNS(null, "points", calculatePosition(x, y));
+            element.setAttributeNS(null, "points", calculatePoints(x, y));
         };
     };
 
@@ -87,17 +87,17 @@ function triangle(
             className="svg-shape"
             onMouseDown={handleMouseDown}
             key={new Date().getTime()}
-            points={calculatePosition(x, y)}
+            points={calculatePoints(x, y)}
         />
     );
 }
 
 export default function Shape(props: {
     shape: ShapeType;
-    setShape: (s: ShapeType) => void;
+    setDragShape: (s: ShapeType) => void;
 }) {
     const handleOnDragStart = () => {
-        props.setShape(props.shape);
+        props.setDragShape(props.shape);
     };
     return (
         <div data-testid="shape" className="shape">

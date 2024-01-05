@@ -1,9 +1,17 @@
 import React, { useState, DragEvent, MouseEvent } from "react";
 import { Draggable, ShapeType } from "./Shapes";
 
-export default function Workspace(props: { shape: ShapeType | undefined }) {
-    const [elements, setElements] = useState<React.JSX.Element[]>([]);
-    const [dragElement, setDragElement] = useState<[Draggable | null]>([null]);
+export default function Workspace(props: {
+    draggedShape: ShapeType | undefined;
+}) {
+    const [canvasElements, setCanvasElements] = useState<React.JSX.Element[]>(
+        []
+    );
+    // symply having useState<Draggable | undefined> does not work.
+    // when setting state with draggable, the draggable is called right away?
+    const [dragElement, setDragElement] = useState<[Draggable | undefined]>([
+        undefined,
+    ]);
 
     const calculateCoordinatesInCanvas = (coordinates: {
         clientX: number;
@@ -25,16 +33,16 @@ export default function Workspace(props: { shape: ShapeType | undefined }) {
     };
 
     const resetDragElement = () => {
-        setDragElement([null]);
+        setDragElement([undefined]);
     };
 
     const handleOnDrop = (e: DragEvent) => {
-        if (props.shape) {
+        if (props.draggedShape) {
             const [x, y] = calculateCoordinatesInCanvas(e);
-            const element = props.shape(x, y, (e: Draggable) => {
+            const element = props.draggedShape(x, y, (e: Draggable) => {
                 setDragElement([e]);
             });
-            setElements([...elements, element]);
+            setCanvasElements([...canvasElements, element]);
         }
     };
 
@@ -56,7 +64,7 @@ export default function Workspace(props: { shape: ShapeType | undefined }) {
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {elements}
+                {canvasElements}
             </svg>
         </div>
     );
