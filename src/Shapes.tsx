@@ -20,6 +20,7 @@ function circle(
 
     return (
         <circle
+            className="svg-shape"
             onMouseDown={handleMouseDown}
             key={new Date().getTime()}
             cx={x}
@@ -49,6 +50,7 @@ function square(
 
     return (
         <rect
+            className="svg-shape"
             onMouseDown={handleMouseDown}
             key={new Date().getTime()}
             x={x - 20}
@@ -82,6 +84,7 @@ function triangle(
 
     return (
         <polygon
+            className="svg-shape"
             onMouseDown={handleMouseDown}
             key={new Date().getTime()}
             points={calculatePosition(x, y)}
@@ -98,11 +101,7 @@ export default function Shape(props: {
     };
     return (
         <div data-testid="shape" className="shape">
-            <div
-                className="draggable"
-                onDragStart={handleOnDragStart}
-                draggable={true}
-            >
+            <div onDragStart={handleOnDragStart} draggable={true}>
                 <svg
                     width="50"
                     height="50"

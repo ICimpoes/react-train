@@ -35,7 +35,6 @@ body {
 
 .palette {
     width: 80px;
-    background: #fff;
     border-right: 2px #ddd solid;
     height: 100%;
 }
@@ -45,15 +44,10 @@ body {
     border-bottom: 1px #ddd solid;
 }
 
-.shape svg {
+.svg-shape {
     display: block;
     stroke: #88a1c7;
     fill: #dce8fa;
     stroke-width: 3px;
 }
 
-.draggable {
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0);
-}
