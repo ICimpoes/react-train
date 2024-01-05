@@ -13,22 +13,9 @@ export default function Workspace(props: {
         undefined,
     ]);
 
-    const calculateCoordinatesInCanvas = (coordinates: {
-        clientX: number;
-        clientY: number;
-    }) => {
-        const canvas = document.getElementById("canvas");
-        if (!canvas) {
-            return [coordinates.clientX, coordinates.clientY];
-        }
-        const { x, y } = canvas.getBoundingClientRect();
-        return [coordinates.clientX - x, coordinates.clientY - y];
-    };
-
     const handleMouseMove = (e: MouseEvent) => {
         if (dragElement[0]) {
-            const [x, y] = calculateCoordinatesInCanvas(e);
-            dragElement[0](x, y);
+            dragElement[0](e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         }
     };
 
@@ -38,10 +25,13 @@ export default function Workspace(props: {
 
     const handleOnDrop = (e: DragEvent) => {
         if (props.draggedShape) {
-            const [x, y] = calculateCoordinatesInCanvas(e);
-            const element = props.draggedShape(x, y, (e: Draggable) => {
-                setDragElement([e]);
-            });
+            const element = props.draggedShape(
+                e.nativeEvent.offsetX,
+                e.nativeEvent.offsetY,
+                (e: Draggable) => {
+                    setDragElement([e]);
+                }
+            );
             setCanvasElements([...canvasElements, element]);
         }
     };
