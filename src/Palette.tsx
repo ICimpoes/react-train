@@ -1,14 +1,44 @@
 import React from "react";
-import Shape, { ShapeType, Shapes } from "./Shapes";
+import { Shapes, ShapeTypes, ShapeType } from "./Shapes";
 
 export default function Palette(props: {
-    setDragShape: (shape: ShapeType) => void;
+    onDragStart: (shape: ShapeType) => void;
 }) {
     return (
         <div data-testid="palette" className="palette">
-            {Shapes.map((s, i) => (
-                <Shape key={i} shape={s} setDragShape={props.setDragShape} />
-            ))}
+            {ShapeTypes.map((key) => {
+                return (
+                    <Shape
+                        onDragStart={props.onDragStart}
+                        key={key}
+                        shape={key}
+                    />
+                );
+            })}
+        </div>
+    );
+}
+
+function Shape(props: {
+    shape: ShapeType;
+    onDragStart: (shape: ShapeType) => void;
+}) {
+    const handleOnDragStart = React.useCallback(() => {
+        props.onDragStart(props.shape);
+    }, [props.shape]);
+
+    return (
+        <div data-testid="shape" className="shape">
+            <div onDragStart={handleOnDragStart} draggable={true}>
+                <svg
+                    width="50"
+                    height="50"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    {Shapes[props.shape]({ point: { x: 25, y: 25 } })}
+                </svg>
+            </div>
         </div>
     );
 }

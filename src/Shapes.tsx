@@ -1,121 +1,86 @@
-import React, { MouseEvent } from "react";
+import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
-function circle(
-    x: number,
-    y: number,
-    setDragItem?: (e: Draggable) => void
-): React.JSX.Element {
-    const drag = (element: SVGCircleElement) => {
-        return (x: number, y: number) => {
-            element.setAttributeNS(null, "cx", x.toString());
-            element.setAttributeNS(null, "cy", y.toString());
-        };
-    };
+export const Shapes = {
+    circle: (props: shapeProps) => {
+        return (
+            <Circle
+                key={uuidv4()}
+                handleMouseDown={props.handleMouseDown}
+                point={props.point}
+            />
+        );
+    },
+    square: (props: shapeProps) => {
+        return (
+            <Square
+                key={uuidv4()}
+                handleMouseDown={props.handleMouseDown}
+                point={props.point}
+            />
+        );
+    },
+    triangle: (props: shapeProps) => {
+        return (
+            <Triangle
+                key={uuidv4()}
+                handleMouseDown={props.handleMouseDown}
+                point={props.point}
+            />
+        );
+    },
+};
 
-    const handleMouseDown = (e: MouseEvent<SVGCircleElement>) => {
-        if (setDragItem) {
-            setDragItem(drag(e.currentTarget));
-        }
-    };
+export type ShapeType = keyof typeof Shapes;
 
+export const ShapeTypes: ShapeType[] = Object.keys(Shapes) as ShapeType[];
+
+interface Point {
+    x: number;
+    y: number;
+}
+
+interface shapeProps {
+    point: Point;
+    handleMouseDown?: () => void;
+}
+
+function Circle(props: shapeProps): React.JSX.Element {
     return (
         <circle
             className="svg-shape"
-            onMouseDown={handleMouseDown}
-            key={new Date().getTime()}
-            cx={x}
-            cy={y}
+            onMouseDown={props.handleMouseDown}
+            cx={props.point.x}
+            cy={props.point.y}
             r="20"
         />
     );
 }
 
-function square(
-    x: number,
-    y: number,
-    setDragItem?: (e: Draggable) => void
-): React.JSX.Element {
-    const drag = (element: SVGRectElement) => {
-        return (x: number, y: number) => {
-            element.setAttributeNS(null, "x", (x - 20).toString());
-            element.setAttributeNS(null, "y", (y - 20).toString());
-        };
-    };
-
-    const handleMouseDown = (e: MouseEvent<SVGRectElement>) => {
-        if (setDragItem) {
-            setDragItem(drag(e.currentTarget));
-        }
-    };
-
+function Square(props: shapeProps): React.JSX.Element {
     return (
         <rect
             className="svg-shape"
-            onMouseDown={handleMouseDown}
-            key={new Date().getTime()}
-            x={x - 20}
-            y={y - 20}
+            onMouseDown={props.handleMouseDown}
+            x={props.point.x - 20}
+            y={props.point.y - 20}
             width="40"
             height="40"
         />
     );
 }
 
-function triangle(
-    x: number,
-    y: number,
-    setDragItem?: (e: Draggable) => void
-): React.JSX.Element {
-    const calculatePoints = (x: number, y: number): string => {
+function Triangle(props: shapeProps): React.JSX.Element {
+    const calculatePoints = React.useCallback((point: Point): string => {
+        const { x, y } = point;
         return `${x - 20},${y + 20} ${x},${y - 20} ${x + 20},${y + 20}`;
-    };
-
-    const drag = (element: SVGPolygonElement) => {
-        return (x: number, y: number) => {
-            element.setAttributeNS(null, "points", calculatePoints(x, y));
-        };
-    };
-
-    const handleMouseDown = (e: MouseEvent<SVGPolygonElement>) => {
-        if (setDragItem) {
-            setDragItem(drag(e.currentTarget));
-        }
-    };
+    }, []);
 
     return (
         <polygon
             className="svg-shape"
-            onMouseDown={handleMouseDown}
-            key={new Date().getTime()}
-            points={calculatePoints(x, y)}
+            onMouseDown={props.handleMouseDown}
+            points={calculatePoints(props.point)}
         />
     );
 }
-
-export default function Shape(props: {
-    shape: ShapeType;
-    setDragShape: (s: ShapeType) => void;
-}) {
-    const handleOnDragStart = () => {
-        props.setDragShape(props.shape);
-    };
-    return (
-        <div data-testid="shape" className="shape">
-            <div onDragStart={handleOnDragStart} draggable={true}>
-                <svg
-                    width="50"
-                    height="50"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    {props.shape(25, 25)}
-                </svg>
-            </div>
-        </div>
-    );
-}
-export const Shapes = [circle, square, triangle];
-
-export type ShapeType = (typeof Shapes)[0];
-
-export type Draggable = (x: number, y: number) => void;

@@ -1,9 +1,15 @@
-import * as React from "react";
-import "./App.css";
-import Editor from "./Editor";
+import React, { useState } from "react";
+import { ShapeType } from "./Shapes";
+import Palette from "./Palette";
+import Workspace from "./Workspace";
 
-export default class App extends React.Component {
-    public render(): JSX.Element {
-        return <Editor />;
-    }
+export default function App() {
+    const [dragShape, setDragShape] = useState<ShapeType | undefined>();
+
+    return (
+        <div data-testid="editor" className="editor">
+            <Palette onDragStart={setDragShape} />
+            <Workspace draggedShape={dragShape} />
+        </div>
+    );
 }
