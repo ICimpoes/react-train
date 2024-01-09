@@ -30,26 +30,29 @@ export default function Workspace(props: {
         [canvasElements, dragElement]
     );
 
-    const resetDragElement = () => {
+    const resetDragElement = React.useCallback(() => {
         setDragElement(undefined);
-    };
+    }, []);
 
-    const handleOnDrop = (e: DragEvent) => {
-        if (props.draggedShape) {
-            const canvasElement = {
-                shape: props.draggedShape,
-                point: {
-                    x: e.nativeEvent.offsetX,
-                    y: e.nativeEvent.offsetY,
-                },
-            };
-            setCanvasElements([...canvasElements, canvasElement]);
-        }
-    };
+    const handleOnDrop = React.useCallback(
+        (e: DragEvent) => {
+            if (props.draggedShape) {
+                const canvasElement = {
+                    shape: props.draggedShape,
+                    point: {
+                        x: e.nativeEvent.offsetX,
+                        y: e.nativeEvent.offsetY,
+                    },
+                };
+                setCanvasElements([...canvasElements, canvasElement]);
+            }
+        },
+        [canvasElements, props.draggedShape]
+    );
 
-    const handleDragOver = (e: DragEvent) => {
+    const handleDragOver = React.useCallback((e: DragEvent) => {
         e.preventDefault();
-    };
+    }, []);
 
     return (
         <div data-testid="workspace" className="workspace">
@@ -68,7 +71,7 @@ export default function Workspace(props: {
                 {canvasElements.map((element, idx) => {
                     return Shapes[element.shape]({
                         point: element.point,
-                        handleMouseDown: () => {
+                        onMouseDown: () => {
                             setDragElement(idx);
                         },
                     });
