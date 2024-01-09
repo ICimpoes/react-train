@@ -1,9 +1,11 @@
 import React from "react";
 import { Shapes, ShapeTypes, ShapeType } from "./Shapes";
 
-export default function Palette(props: {
+interface PaletteProps {
     onDragStart: (shape: ShapeType) => void;
-}) {
+}
+
+export default function Palette(props: PaletteProps) {
     return (
         <div data-testid="palette" className="palette">
             {ShapeTypes.map((key) => {
@@ -19,17 +21,19 @@ export default function Palette(props: {
     );
 }
 
-function Shape(props: {
+interface ShapeProps {
     shape: ShapeType;
     onDragStart: (shape: ShapeType) => void;
-}) {
-    const handleOnDragStart = React.useCallback(() => {
+}
+
+function Shape(props: ShapeProps) {
+    const handleDragStart = React.useCallback(() => {
         props.onDragStart(props.shape);
     }, [props.shape]);
 
     return (
         <div data-testid="shape" className="shape">
-            <div onDragStart={handleOnDragStart} draggable={true}>
+            <div onDragStart={handleDragStart} draggable={true}>
                 <svg
                     width="50"
                     height="50"
