@@ -51,9 +51,27 @@ export const shapesSlice = createSlice({
                     action.payload;
             }
         },
+        resetActive: (state) => {
+            state.canvasElements.map((element) => {
+                element.active = false;
+            });
+        },
+        deleteActive: (state) => {
+            state.canvasElements = state.canvasElements.filter((element) => {
+                return !element.active;
+            });
+        },
     },
 });
 
-export const { drag, drop, select, resetSelected, move } = shapesSlice.actions;
+export const {
+    drag,
+    drop,
+    select,
+    resetSelected,
+    move,
+    deleteActive,
+    resetActive,
+} = shapesSlice.actions;
 
 export default shapesSlice.reducer;
