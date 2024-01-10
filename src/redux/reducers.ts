@@ -1,6 +1,4 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Point } from "../models";
 import { ShapeType } from "../Shapes";
 
@@ -15,7 +13,7 @@ interface CanvasElement {
     point: Point;
 }
 
-const shapesSlice = createSlice({
+export const shapesSlice = createSlice({
     name: "shapes",
     initialState: {
         canvasElements: [],
@@ -48,22 +46,6 @@ const shapesSlice = createSlice({
     },
 });
 
-export const shapesStore = configureStore({
-    reducer: {
-        shapes: shapesSlice.reducer,
-    },
-});
-
 export const { drag, drop, select, resetSelected, move } = shapesSlice.actions;
 
 export default shapesSlice.reducer;
-
-export type RootState = ReturnType<typeof shapesStore.getState>;
-
-export const selectCanvasElements = (state: RootState) =>
-    state.shapes.canvasElements;
-
-export type AppDispatch = typeof shapesStore.dispatch;
-
-export const useAppDispatch: () => AppDispatch = useDispatch;
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

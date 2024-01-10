@@ -1,13 +1,7 @@
 import React, { DragEvent, MouseEvent } from "react";
-import {
-    selectCanvasElements,
-    useAppDispatch,
-    useAppSelector,
-    drop,
-    move,
-    select,
-    resetSelected,
-} from "./redux/store";
+import { drop, move, select, resetSelected } from "./redux/reducers";
+import { selectCanvasElements } from "./redux/store";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
 
 export default function Workspace() {

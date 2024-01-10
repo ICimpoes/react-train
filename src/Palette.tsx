@@ -1,5 +1,6 @@
 import React from "react";
-import { useAppDispatch, drag } from "./redux/store";
+import { useAppDispatch } from "./redux/hooks";
+import { drag } from "./redux/reducers";
 import { Shapes, ShapeTypes, ShapeType } from "./Shapes";
 
 export default function Palette() {
