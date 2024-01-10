@@ -1,52 +1,35 @@
-import React, { useState, DragEvent, MouseEvent } from "react";
-import { Shapes, ShapeType } from "./Shapes";
+import React, { DragEvent, MouseEvent } from "react";
+import {
+    selectCanvasElements,
+    useAppDispatch,
+    useAppSelector,
+    drop,
+    move,
+    select,
+    resetSelected,
+} from "./redux/store";
+import { Shapes } from "./Shapes";
 
-interface canvasShape {
-    shape: ShapeType;
-    point: {
-        x: number;
-        y: number;
-    };
-}
-
-export default function Workspace(props: { draggedShape?: ShapeType }) {
-    const [canvasElements, setCanvasElements] = useState<canvasShape[]>([]);
-
-    const [dragElement, setDragElement] = useState<number>();
+export default function Workspace() {
+    const dispatch = useAppDispatch();
+    const canvasElements = useAppSelector(selectCanvasElements);
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            if (dragElement !== undefined) {
-                const elements = canvasElements.slice();
-                elements[dragElement].point = {
-                    x: e.nativeEvent.offsetX,
-                    y: e.nativeEvent.offsetY,
-                };
-                setCanvasElements(elements);
-            }
+            dispatch(
+                move({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
+            );
         },
-        [canvasElements, dragElement]
+        [canvasElements]
     );
 
     const resetDragElement = React.useCallback(() => {
-        setDragElement(undefined);
+        dispatch(resetSelected());
     }, []);
 
-    const handleOnDrop = React.useCallback(
-        (e: DragEvent) => {
-            if (props.draggedShape) {
-                const canvasElement = {
-                    shape: props.draggedShape,
-                    point: {
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY,
-                    },
-                };
-                setCanvasElements([...canvasElements, canvasElement]);
-            }
-        },
-        [canvasElements, props.draggedShape]
-    );
+    const handleOnDrop = React.useCallback((e: DragEvent) => {
+        dispatch(drop({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }));
+    }, []);
 
     const handleDragOver = React.useCallback((e: DragEvent) => {
         e.preventDefault();
@@ -70,7 +53,7 @@ export default function Workspace(props: { draggedShape?: ShapeType }) {
                     return Shapes[element.shape]({
                         point: element.point,
                         onMouseDown: () => {
-                            setDragElement(idx);
+                            dispatch(select(idx));
                         },
                     });
                 })}

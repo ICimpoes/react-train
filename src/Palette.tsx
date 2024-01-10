@@ -1,46 +1,46 @@
 import React from "react";
+import { useAppDispatch, drag } from "./redux/store";
 import { Shapes, ShapeTypes, ShapeType } from "./Shapes";
 
-interface PaletteProps {
-    onDragStart: (shape: ShapeType) => void;
-}
-
-export default function Palette(props: PaletteProps) {
+export default function Palette() {
     return (
         <div data-testid="palette" className="palette">
-            {ShapeTypes.map((key) => {
-                return (
-                    <Shape
-                        onDragStart={props.onDragStart}
-                        key={key}
-                        shape={key}
-                    />
-                );
+            {ShapeTypes.map((shapeType) => {
+                return <Shape key={shapeType} shapeType={shapeType} />;
             })}
         </div>
     );
 }
 
 interface ShapeProps {
-    shape: ShapeType;
-    onDragStart: (shape: ShapeType) => void;
+    shapeType: ShapeType;
 }
 
 function Shape(props: ShapeProps) {
+    const dispatch = useAppDispatch();
+
     const handleDragStart = React.useCallback(() => {
-        props.onDragStart(props.shape);
-    }, [props.shape]);
+        dispatch(drag(props.shapeType));
+    }, [props.shapeType]);
+
+    const handleDragEnd = React.useCallback(() => {
+        dispatch(drag());
+    }, [props.shapeType]);
 
     return (
         <div data-testid="shape" className="shape">
-            <div onDragStart={handleDragStart} draggable={true}>
+            <div
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                draggable={true}
+            >
                 <svg
                     width="50"
                     height="50"
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
                 >
-                    {Shapes[props.shape]({ point: { x: 25, y: 25 } })}
+                    {Shapes[props.shapeType]({ point: { x: 25, y: 25 } })}
                 </svg>
             </div>
         </div>

@@ -4,13 +4,17 @@ import App from "./App";
 import "./index.css";
 import "./App.css";
 import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
+import { shapesStore } from "./redux/store";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 root.render(
     <React.StrictMode>
-        <App />
+        <Provider store={shapesStore}>
+            <App />
+        </Provider>
     </React.StrictMode>
 );
 

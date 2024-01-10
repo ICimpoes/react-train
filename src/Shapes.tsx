@@ -3,31 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 
 export const Shapes = {
     circle: (props: shapeProps) => {
-        return (
-            <Circle
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
+        return <Circle key={uuidv4()} props={props} />;
     },
     square: (props: shapeProps) => {
-        return (
-            <Square
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
+        return <Square key={uuidv4()} props={props} />;
     },
     triangle: (props: shapeProps) => {
-        return (
-            <Triangle
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
+        return <Triangle key={uuidv4()} props={props} />;
     },
 };
 
@@ -45,32 +27,36 @@ interface shapeProps {
     onMouseDown?: () => void;
 }
 
-function Circle(props: shapeProps): React.JSX.Element {
+interface propsWrapper {
+    props: shapeProps;
+}
+
+function Circle(props: propsWrapper): React.JSX.Element {
     return (
         <circle
             className="svg-shape"
-            onMouseDown={props.onMouseDown}
-            cx={props.point.x}
-            cy={props.point.y}
+            onMouseDown={props.props.onMouseDown}
+            cx={props.props.point.x}
+            cy={props.props.point.y}
             r="20"
         />
     );
 }
 
-function Square(props: shapeProps): React.JSX.Element {
+function Square(props: propsWrapper): React.JSX.Element {
     return (
         <rect
             className="svg-shape"
-            onMouseDown={props.onMouseDown}
-            x={props.point.x - 20}
-            y={props.point.y - 20}
+            onMouseDown={props.props.onMouseDown}
+            x={props.props.point.x - 20}
+            y={props.props.point.y - 20}
             width="40"
             height="40"
         />
     );
 }
 
-function Triangle(props: shapeProps): React.JSX.Element {
+function Triangle(props: propsWrapper): React.JSX.Element {
     const calculatePoints = React.useCallback((point: Point): string => {
         const { x, y } = point;
         return `${x - 20},${y + 20} ${x},${y - 20} ${x + 20},${y + 20}`;
@@ -79,8 +65,8 @@ function Triangle(props: shapeProps): React.JSX.Element {
     return (
         <polygon
             className="svg-shape"
-            onMouseDown={props.onMouseDown}
-            points={calculatePoints(props.point)}
+            onMouseDown={props.props.onMouseDown}
+            points={calculatePoints(props.props.point)}
         />
     );
 }
