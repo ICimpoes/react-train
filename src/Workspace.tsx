@@ -9,12 +9,10 @@ interface canvasShape {
     };
 }
 
-export default function Workspace(props: {
-    draggedShape: ShapeType | undefined;
-}) {
+export default function Workspace(props: { draggedShape?: ShapeType }) {
     const [canvasElements, setCanvasElements] = useState<canvasShape[]>([]);
 
-    const [dragElement, setDragElement] = useState<number | undefined>();
+    const [dragElement, setDragElement] = useState<number>();
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {

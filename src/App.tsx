@@ -4,7 +4,7 @@ import Palette from "./Palette";
 import Workspace from "./Workspace";
 
 export default function App() {
-    const [dragShape, setDragShape] = useState<ShapeType | undefined>();
+    const [dragShape, setDragShape] = useState<ShapeType>();
 
     return (
         <div data-testid="editor" className="editor">
