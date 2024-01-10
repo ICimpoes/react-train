@@ -1,20 +1,16 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { Point } from "../models";
 import { ShapeType } from "../Shapes";
 
-interface storeState {
+interface StoreState {
     dragShape?: ShapeType;
-    canvasElements: canvasElement[];
+    canvasElements: CanvasElement[];
     selectedElement?: number;
 }
 
-type Point = {
-    x: number;
-    y: number;
-};
-
-interface canvasElement {
+interface CanvasElement {
     shape: ShapeType;
     point: Point;
 }
@@ -23,7 +19,7 @@ const shapesSlice = createSlice({
     name: "shapes",
     initialState: {
         canvasElements: [],
-    } as storeState,
+    } as StoreState,
     reducers: {
         drag: (state, action: PayloadAction<ShapeType | undefined>) => {
             state.dragShape = action.payload;
