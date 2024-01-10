@@ -20,6 +20,7 @@ export const ShapeTypes: ShapeType[] = Object.keys(Shapes) as ShapeType[];
 
 interface shapeProps {
     point: Point;
+    active?: boolean;
     onMouseDown?: () => void;
 }
 
@@ -27,10 +28,17 @@ interface propsWrapper {
     props: shapeProps;
 }
 
+function shapeClass(active?: boolean): string {
+    if (active) {
+        return "svg-shape active";
+    }
+    return "svg-shape";
+}
+
 function Circle(props: propsWrapper): React.JSX.Element {
     return (
         <circle
-            className="svg-shape"
+            className={shapeClass(props.props.active)}
             onMouseDown={props.props.onMouseDown}
             cx={props.props.point.x}
             cy={props.props.point.y}
@@ -42,7 +50,7 @@ function Circle(props: propsWrapper): React.JSX.Element {
 function Square(props: propsWrapper): React.JSX.Element {
     return (
         <rect
-            className="svg-shape"
+            className={shapeClass(props.props.active)}
             onMouseDown={props.props.onMouseDown}
             x={props.props.point.x - 20}
             y={props.props.point.y - 20}
@@ -60,7 +68,7 @@ function Triangle(props: propsWrapper): React.JSX.Element {
 
     return (
         <polygon
-            className="svg-shape"
+            className={shapeClass(props.props.active)}
             onMouseDown={props.props.onMouseDown}
             points={calculatePoints(props.props.point)}
         />

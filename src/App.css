@@ -50,3 +50,7 @@ body {
     fill: #dce8fa;
     stroke-width: 3px;
 }
+
+.svg-shape.active {
+    fill: #ff0000;
+}

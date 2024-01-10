@@ -46,6 +46,7 @@ export default function Workspace() {
                 {canvasElements.map((element, idx) => {
                     return Shapes[element.shape]({
                         point: element.point,
+                        active: element.active,
                         onMouseDown: () => {
                             dispatch(select(idx));
                         },

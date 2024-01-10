@@ -11,6 +11,7 @@ interface StoreState {
 interface CanvasElement {
     shape: ShapeType;
     point: Point;
+    active?: boolean;
 }
 
 export const shapesSlice = createSlice({
@@ -26,12 +27,19 @@ export const shapesSlice = createSlice({
             if (!state.dragShape) {
                 return;
             }
+            state.canvasElements.map((element) => {
+                element.active = false;
+            });
             state.canvasElements.push({
                 shape: state.dragShape,
                 point: action.payload,
             });
         },
         select: (state, action: PayloadAction<number>) => {
+            state.canvasElements.map((element) => {
+                element.active = false;
+            });
+            state.canvasElements[action.payload].active = true;
             state.selectedElement = action.payload;
         },
         resetSelected: (state) => {
