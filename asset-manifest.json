@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/react-train/static/css/main.c2d60921.css",
-    "main.js": "/react-train/static/js/main.e1d669dd.js",
+    "main.js": "/react-train/static/js/main.93b021ae.js",
     "static/js/787.ab98b848.chunk.js": "/react-train/static/js/787.ab98b848.chunk.js",
     "index.html": "/react-train/index.html",
     "main.c2d60921.css.map": "/react-train/static/css/main.c2d60921.css.map",
-    "main.e1d669dd.js.map": "/react-train/static/js/main.e1d669dd.js.map",
+    "main.93b021ae.js.map": "/react-train/static/js/main.93b021ae.js.map",
     "787.ab98b848.chunk.js.map": "/react-train/static/js/787.ab98b848.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c2d60921.css",
-    "static/js/main.e1d669dd.js"
+    "static/js/main.93b021ae.js"
   ]
 }
