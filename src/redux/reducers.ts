@@ -19,8 +19,11 @@ export const shapesSlice = createSlice({
         canvasElements: [],
     } as StoreState,
     reducers: {
-        drag: (state, action: PayloadAction<ShapeType | undefined>) => {
+        drag: (state, action: PayloadAction<ShapeType>) => {
             state.dragShape = action.payload;
+        },
+        resetDrag: (state) => {
+            state.dragShape = undefined;
         },
         drop: (state, action: PayloadAction<Point>) => {
             if (!state.dragShape) {
@@ -46,6 +49,7 @@ export const shapesSlice = createSlice({
     },
 });
 
-export const { drag, drop, select, resetSelected, move } = shapesSlice.actions;
+export const { drag, resetDrag, drop, select, resetSelected, move } =
+    shapesSlice.actions;
 
 export default shapesSlice.reducer;

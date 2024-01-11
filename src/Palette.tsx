@@ -1,13 +1,13 @@
 import React from "react";
 import { useAppDispatch } from "./redux/hooks";
-import { drag } from "./redux/reducers";
+import { drag, resetDrag } from "./redux/reducers";
 import { Shapes, ShapeTypes, ShapeType } from "./Shapes";
 
 export default function Palette() {
     return (
         <div data-testid="palette" className="palette">
             {ShapeTypes.map((shapeType) => {
-                return <Shape key={shapeType} shapeType={shapeType} />;
+                return <PaletteShape key={shapeType} shapeType={shapeType} />;
             })}
         </div>
     );
@@ -17,7 +17,7 @@ interface ShapeProps {
     shapeType: ShapeType;
 }
 
-function Shape(props: ShapeProps) {
+function PaletteShape(props: ShapeProps) {
     const dispatch = useAppDispatch();
 
     const handleDragStart = React.useCallback(() => {
@@ -25,8 +25,10 @@ function Shape(props: ShapeProps) {
     }, [props.shapeType]);
 
     const handleDragEnd = React.useCallback(() => {
-        dispatch(drag());
+        dispatch(resetDrag());
     }, [props.shapeType]);
+
+    const Shape = Shapes[props.shapeType];
 
     return (
         <div data-testid="shape" className="shape">
@@ -41,7 +43,7 @@ function Shape(props: ShapeProps) {
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
                 >
-                    {Shapes[props.shapeType]({ point: { x: 25, y: 25 } })}
+                    <Shape point={{ x: 25, y: 25 }} />
                 </svg>
             </div>
         </div>

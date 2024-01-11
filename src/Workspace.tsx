@@ -44,12 +44,17 @@ export default function Workspace() {
                 xmlns="http://www.w3.org/2000/svg"
             >
                 {canvasElements.map((element, idx) => {
-                    return Shapes[element.shape]({
-                        point: element.point,
-                        onMouseDown: () => {
-                            dispatch(select(idx));
-                        },
-                    });
+                    const Shape = Shapes[element.shape];
+                    const handleMouseDown = () => {
+                        dispatch(select(idx));
+                    };
+                    return (
+                        <Shape
+                            key={idx}
+                            point={element.point}
+                            onMouseDown={handleMouseDown}
+                        />
+                    );
                 })}
             </svg>
         </div>
