@@ -1,6 +1,6 @@
 import React, { DragEvent, MouseEvent, useState } from "react";
-import { drop, move } from "./redux/reducers";
-import { selectCanvasElements } from "./redux/store";
+import { add, move } from "./redux/canvasSlice";
+import { selectCanvasElements, selectDragElement } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
 import { Point } from "./models";
@@ -8,6 +8,7 @@ import { Point } from "./models";
 export default function Workspace() {
     const dispatch = useAppDispatch();
     const canvasElements = useAppSelector(selectCanvasElements);
+    const dragElement = useAppSelector(selectDragElement);
 
     const [selectedElementKey, setSelectedElementKey] = useState<string>();
 
@@ -32,9 +33,17 @@ export default function Workspace() {
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
-            dispatch(drop(eventToPoint(e)));
+            if (!dragElement) {
+                return;
+            }
+            dispatch(
+                add({
+                    shape: dragElement,
+                    point: eventToPoint(e),
+                })
+            );
         },
-        [dispatch, drop, eventToPoint]
+        [dragElement, dispatch, add, eventToPoint]
     );
 
     const handleDragOver = React.useCallback((e: DragEvent) => {

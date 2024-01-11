@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch } from "./redux/hooks";
-import { drag, resetDrag } from "./redux/reducers";
+import { drag, resetDrag } from "./redux/dragSlice";
 import { Shapes, ShapeType } from "./Shapes";
 
 interface PaletteShapeProps {
