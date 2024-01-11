@@ -3,13 +3,14 @@ import Palette from "./Palette";
 import { useAppDispatch } from "./redux/hooks";
 import { resetSelected, deleteSelected, undo } from "./redux/canvasSlice";
 import Workspace from "./Workspace";
+import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 
 export default function App() {
     const dispatch = useAppDispatch();
 
     const handleKeyUp = React.useCallback(
         (event: KeyboardEvent) => {
-            const action = keyMap(event.key);
+            const action = keyMap[event.key];
             if (action) {
                 dispatch(action());
             }
@@ -38,15 +39,8 @@ export default function App() {
     );
 }
 
-function keyMap(key: string) {
-    switch (key) {
-        case "d":
-            return deleteSelected;
-        case "Escape":
-            return resetSelected;
-        case "u":
-            return undo;
-        default:
-            return undefined;
-    }
-}
+const keyMap = {
+    d: deleteSelected,
+    Escape: resetSelected,
+    u: undo,
+} as Record<string, ActionCreatorWithoutPayload>;
