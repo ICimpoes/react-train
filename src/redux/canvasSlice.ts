@@ -4,9 +4,12 @@ import { ShapeType } from "../Shapes";
 import { v4 as uuid } from "uuid";
 
 interface CanvasStoreState {
-    elements: Record<string, CanvasElement>;
+    elements: CanvasElements;
     activeElementKey?: string;
+    history: CanvasHistory;
 }
+
+type CanvasElements = Record<string, CanvasElement>;
 
 interface CanvasElement {
     key: string;
@@ -25,10 +28,19 @@ interface NewElement {
     point: Point;
 }
 
+interface CanvasHistory {
+    elements: CanvasElements[];
+    present: number;
+}
+
 export const canvasSlice = createSlice({
     name: "canvas",
     initialState: {
         elements: {},
+        history: {
+            elements: [{}],
+            present: 0,
+        },
     } as CanvasStoreState,
     reducers: {
         add: (state, action: PayloadAction<NewElement>) => {
@@ -38,6 +50,7 @@ export const canvasSlice = createSlice({
                 point: action.payload.point,
             };
             state.elements[element.key] = element;
+            addToHistory(state);
         },
         move: (state, action: PayloadAction<ElementPosition>) => {
             state.elements[action.payload.key].point = action.payload.point;
@@ -54,10 +67,17 @@ export const canvasSlice = createSlice({
             if (!state.activeElementKey) {
                 return;
             }
-            console.log("delete", state.activeElementKey, state.elements);
             delete state.elements[state.activeElementKey];
             state.activeElementKey = undefined;
-            console.log("deleted", state.activeElementKey, state.elements);
+            addToHistory(state);
+        },
+        undo: (state) => {
+            state.activeElementKey = undefined;
+            if (state.history.present == 0) {
+                return;
+            }
+            state.history.present--;
+            state.elements = state.history.elements[state.history.present];
         },
     },
 });
@@ -67,9 +87,19 @@ function resetActive(state: CanvasStoreState) {
         return;
     }
     state.elements[state.activeElementKey].active = undefined;
+    state.activeElementKey = undefined;
 }
 
-export const { add, move, select, resetSelected, deleteSelected } =
+function addToHistory(state: CanvasStoreState) {
+    state.history.present++;
+    state.history.elements = state.history.elements.slice(
+        0,
+        state.history.present
+    );
+    state.history.elements.push(state.elements);
+}
+
+export const { add, move, select, resetSelected, deleteSelected, undo } =
     canvasSlice.actions;
 
 export default canvasSlice.reducer;

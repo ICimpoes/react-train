@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Palette from "./Palette";
 import { useAppDispatch } from "./redux/hooks";
-import { resetSelected, deleteSelected } from "./redux/canvasSlice";
+import { resetSelected, deleteSelected, undo } from "./redux/canvasSlice";
 import Workspace from "./Workspace";
 
 export default function App() {
@@ -44,6 +44,8 @@ function keyMap(key: string) {
             return deleteSelected;
         case "Escape":
             return resetSelected;
+        case "u":
+            return undo;
         default:
             return undefined;
     }
