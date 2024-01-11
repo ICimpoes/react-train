@@ -41,10 +41,10 @@ export const shapesSlice = createSlice({
             state.selectedElement = undefined;
         },
         move: (state, action: PayloadAction<Point>) => {
-            if (state.selectedElement !== undefined) {
-                state.canvasElements[state.selectedElement].point =
-                    action.payload;
+            if (state.selectedElement === undefined) {
+                return;
             }
+            state.canvasElements[state.selectedElement].point = action.payload;
         },
     },
 });
