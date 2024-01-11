@@ -11,12 +11,12 @@ export type ShapeType = keyof typeof Shapes;
 
 export const ShapeTypes: ShapeType[] = Object.keys(Shapes) as ShapeType[];
 
-interface shapeProps {
+interface ShapeProps {
     point: Point;
     onMouseDown?: () => void;
 }
 
-function Circle(props: shapeProps): React.JSX.Element {
+function Circle(props: ShapeProps): React.JSX.Element {
     return (
         <circle
             className="svg-shape"
@@ -28,7 +28,7 @@ function Circle(props: shapeProps): React.JSX.Element {
     );
 }
 
-function Square(props: shapeProps): React.JSX.Element {
+function Square(props: ShapeProps): React.JSX.Element {
     return (
         <rect
             className="svg-shape"
@@ -41,7 +41,7 @@ function Square(props: shapeProps): React.JSX.Element {
     );
 }
 
-function Triangle(props: shapeProps): React.JSX.Element {
+function Triangle(props: ShapeProps): React.JSX.Element {
     const calculatePoints = React.useCallback((point: Point): string => {
         const { x, y } = point;
         return `${x - 20},${y + 20} ${x},${y - 20} ${x + 20},${y + 20}`;

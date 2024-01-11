@@ -1,5 +1,5 @@
-import React, { DragEvent, MouseEvent } from "react";
-import { drop, move, select, resetSelected } from "./redux/reducers";
+import React, { DragEvent, MouseEvent, useState } from "react";
+import { drop, move } from "./redux/reducers";
 import { selectCanvasElements } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
@@ -9,16 +9,26 @@ export default function Workspace() {
     const dispatch = useAppDispatch();
     const canvasElements = useAppSelector(selectCanvasElements);
 
+    const [selectedElementKey, setSelectedElementKey] = useState<string>();
+
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            dispatch(move(eventToPoint(e)));
+            if (!selectedElementKey) {
+                return;
+            }
+            dispatch(
+                move({
+                    key: selectedElementKey,
+                    point: eventToPoint(e),
+                })
+            );
         },
-        [dispatch, move, eventToPoint]
+        [selectedElementKey, dispatch, move, eventToPoint]
     );
 
-    const resetDragElement = React.useCallback(() => {
-        dispatch(resetSelected());
-    }, [dispatch, resetSelected]);
+    const resetSelectedElement = React.useCallback(() => {
+        setSelectedElementKey(undefined);
+    }, [setSelectedElementKey]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
@@ -38,8 +48,8 @@ export default function Workspace() {
                 onDragOver={handleDragOver}
                 onDrop={handleOnDrop}
                 onMouseMove={handleMouseMove}
-                onMouseUp={resetDragElement}
-                onMouseLeave={resetDragElement}
+                onMouseUp={resetSelectedElement}
+                onMouseLeave={resetSelectedElement}
                 className="canvas"
                 viewBox="0 0 1200 600"
                 version="1.1"
@@ -48,7 +58,7 @@ export default function Workspace() {
                 {Object.values(canvasElements).map((element) => {
                     const Shape = Shapes[element.shape];
                     const handleMouseDown = () => {
-                        dispatch(select(element.key));
+                        setSelectedElementKey(element.key);
                     };
                     return (
                         <Shape

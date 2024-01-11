@@ -6,12 +6,16 @@ import { v4 as uuid } from "uuid";
 interface StoreState {
     dragShape?: ShapeType;
     canvasElements: Record<string, CanvasElement>;
-    selectedElement?: string;
 }
 
 interface CanvasElement {
     key: string;
     shape: ShapeType;
+    point: Point;
+}
+
+interface ElementPosition {
+    key: string;
     point: Point;
 }
 
@@ -39,23 +43,13 @@ export const shapesSlice = createSlice({
             };
             state.canvasElements[element.key] = element;
         },
-        select: (state, action: PayloadAction<string>) => {
-            state.selectedElement = action.payload;
-        },
-        resetSelected: (state) => {
-            state.selectedElement = undefined;
-        },
-        move: (state, action: PayloadAction<Point>) => {
-            if (state.selectedElement === undefined) {
-                return;
-            }
-
-            state.canvasElements[state.selectedElement].point = action.payload;
+        move: (state, action: PayloadAction<ElementPosition>) => {
+            state.canvasElements[action.payload.key].point =
+                action.payload.point;
         },
     },
 });
 
-export const { drag, resetDrag, drop, select, resetSelected, move } =
-    shapesSlice.actions;
+export const { drag, resetDrag, drop, move } = shapesSlice.actions;
 
 export default shapesSlice.reducer;

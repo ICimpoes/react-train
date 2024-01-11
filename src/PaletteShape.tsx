@@ -3,11 +3,11 @@ import { useAppDispatch } from "./redux/hooks";
 import { drag, resetDrag } from "./redux/reducers";
 import { Shapes, ShapeType } from "./Shapes";
 
-interface paletteShapeProps {
+interface PaletteShapeProps {
     shapeType: ShapeType;
 }
 
-export default function PaletteShape(props: paletteShapeProps) {
+export default function PaletteShape(props: PaletteShapeProps) {
     const dispatch = useAppDispatch();
 
     const handleDragStart = React.useCallback(() => {
