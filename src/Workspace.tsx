@@ -45,14 +45,14 @@ export default function Workspace() {
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {canvasElements.map((element, idx) => {
+                {Object.values(canvasElements).map((element) => {
                     const Shape = Shapes[element.shape];
                     const handleMouseDown = () => {
-                        dispatch(select(idx));
+                        dispatch(select(element.key));
                     };
                     return (
                         <Shape
-                            key={idx}
+                            key={element.key}
                             point={element.point}
                             onMouseDown={handleMouseDown}
                         />
