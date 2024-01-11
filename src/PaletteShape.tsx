@@ -12,11 +12,11 @@ export default function PaletteShape(props: paletteShapeProps) {
 
     const handleDragStart = React.useCallback(() => {
         dispatch(drag(props.shapeType));
-    }, [props.shapeType]);
+    }, [dispatch, drag, props.shapeType]);
 
     const handleDragEnd = React.useCallback(() => {
         dispatch(resetDrag());
-    }, [props.shapeType]);
+    }, [dispatch, resetDrag, props.shapeType]);
 
     const Shape = Shapes[props.shapeType];
 

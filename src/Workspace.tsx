@@ -3,6 +3,7 @@ import { drop, move, select, resetSelected } from "./redux/reducers";
 import { selectCanvasElements } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
+import { Point } from "./models";
 
 export default function Workspace() {
     const dispatch = useAppDispatch();
@@ -10,20 +11,21 @@ export default function Workspace() {
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            dispatch(
-                move({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
-            );
+            dispatch(move(eventToPoint(e)));
         },
-        [canvasElements]
+        [dispatch, move, eventToPoint]
     );
 
     const resetDragElement = React.useCallback(() => {
         dispatch(resetSelected());
-    }, []);
+    }, [dispatch, resetSelected]);
 
-    const handleOnDrop = React.useCallback((e: DragEvent) => {
-        dispatch(drop({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }));
-    }, []);
+    const handleOnDrop = React.useCallback(
+        (e: DragEvent) => {
+            dispatch(drop(eventToPoint(e)));
+        },
+        [dispatch, drop, eventToPoint]
+    );
 
     const handleDragOver = React.useCallback((e: DragEvent) => {
         e.preventDefault();
@@ -59,4 +61,8 @@ export default function Workspace() {
             </svg>
         </div>
     );
+}
+
+function eventToPoint(e: MouseEvent): Point {
+    return { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 }
