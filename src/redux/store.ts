@@ -1,15 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { shapesSlice } from "./reducers";
+import { canvasSlice } from "./canvasSlice";
+import { dragSlice } from "./dragSlice";
 
 export const shapesStore = configureStore({
     reducer: {
-        shapes: shapesSlice.reducer,
+        canvas: canvasSlice.reducer,
+        drag: dragSlice.reducer,
     },
 });
 
 export type RootState = ReturnType<typeof shapesStore.getState>;
 
-export const selectCanvasElements = (state: RootState) =>
-    state.shapes.canvasElements;
+export const selectCanvasElements = (state: RootState) => state.canvas.elements;
+
+export const selectDragElement = (state: RootState) => state.drag.shape;
 
 export type AppDispatch = typeof shapesStore.dispatch;
