@@ -5,12 +5,14 @@ import { v4 as uuid } from "uuid";
 
 interface CanvasStoreState {
     elements: Record<string, CanvasElement>;
+    activeElementKey?: string;
 }
 
 interface CanvasElement {
     key: string;
     shape: ShapeType;
     point: Point;
+    active?: boolean;
 }
 
 interface ElementPosition {
@@ -40,9 +42,34 @@ export const canvasSlice = createSlice({
         move: (state, action: PayloadAction<ElementPosition>) => {
             state.elements[action.payload.key].point = action.payload.point;
         },
+        select: (state, action: PayloadAction<string>) => {
+            resetActive(state);
+            state.elements[action.payload].active = true;
+            state.activeElementKey = action.payload;
+        },
+        resetSelected: (state) => {
+            resetActive(state);
+        },
+        deleteSelected: (state) => {
+            if (!state.activeElementKey) {
+                return;
+            }
+            console.log("delete", state.activeElementKey, state.elements);
+            delete state.elements[state.activeElementKey];
+            state.activeElementKey = undefined;
+            console.log("deleted", state.activeElementKey, state.elements);
+        },
     },
 });
 
-export const { add, move } = canvasSlice.actions;
+function resetActive(state: CanvasStoreState) {
+    if (!state.activeElementKey) {
+        return;
+    }
+    state.elements[state.activeElementKey].active = undefined;
+}
+
+export const { add, move, select, resetSelected, deleteSelected } =
+    canvasSlice.actions;
 
 export default canvasSlice.reducer;

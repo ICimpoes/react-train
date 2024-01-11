@@ -1,23 +1,32 @@
 import React, { useEffect } from "react";
 import Palette from "./Palette";
 import { useAppDispatch } from "./redux/hooks";
-import { deleteActive, resetActive, undo } from "./redux/reducers";
+import { resetSelected, deleteSelected } from "./redux/canvasSlice";
 import Workspace from "./Workspace";
 
 export default function App() {
-    const dispantch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-    const handleKeyUp = React.useCallback((event: KeyboardEvent) => {
-        const action = keyMap(event.key);
-        if (action) {
-            dispantch(action());
-        }
-    }, []);
+    const handleKeyUp = React.useCallback(
+        (event: KeyboardEvent) => {
+            const action = keyMap(event.key);
+            if (action) {
+                dispatch(action());
+            }
+        },
+        [keyMap, dispatch]
+    );
+
+    const handleMouseDown = React.useCallback(() => {
+        dispatch(resetSelected());
+    }, [dispatch, resetSelected]);
 
     useEffect(() => {
         document.addEventListener("keyup", handleKeyUp);
+        document.addEventListener("mousedown", handleMouseDown);
         return () => {
             document.removeEventListener("keyup", handleKeyUp);
+            document.removeEventListener("keyup", handleMouseDown);
         };
     }, []);
 
@@ -32,11 +41,9 @@ export default function App() {
 function keyMap(key: string) {
     switch (key) {
         case "d":
-            return deleteActive;
+            return deleteSelected;
         case "Escape":
-            return resetActive;
-        case "u":
-            return undo;
+            return resetSelected;
         default:
             return undefined;
     }

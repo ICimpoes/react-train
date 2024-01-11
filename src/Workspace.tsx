@@ -1,5 +1,5 @@
 import React, { DragEvent, MouseEvent, useState } from "react";
-import { add, move } from "./redux/canvasSlice";
+import { add, move, select } from "./redux/canvasSlice";
 import { selectCanvasElements, selectDragElement } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
@@ -66,11 +66,14 @@ export default function Workspace() {
             >
                 {Object.values(canvasElements).map((element) => {
                     const Shape = Shapes[element.shape];
-                    const handleMouseDown = () => {
+                    const handleMouseDown = (e: MouseEvent) => {
+                        e.stopPropagation();
                         setSelectedElementKey(element.key);
+                        dispatch(select(element.key));
                     };
                     return (
                         <Shape
+                            active={element.active}
                             key={element.key}
                             point={element.point}
                             onMouseDown={handleMouseDown}
