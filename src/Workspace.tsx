@@ -33,7 +33,7 @@ export default function Workspace() {
         }
         dispatch(moveEnd(selectedElementKey));
         setSelectedElementKey(undefined);
-    }, [selectedElementKey, setSelectedElementKey]);
+    }, [selectedElementKey, dispatch, moveEnd, setSelectedElementKey]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
