@@ -31,7 +31,7 @@ export default function Workspace() {
         if (!selectedElementKey) {
             return;
         }
-        dispatch(moveEnd());
+        dispatch(moveEnd(selectedElementKey));
         setSelectedElementKey(undefined);
     }, [selectedElementKey, setSelectedElementKey]);
 

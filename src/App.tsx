@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Palette from "./Palette";
 import { useAppDispatch } from "./redux/hooks";
-import { resetSelected, deleteSelected, undo } from "./redux/canvasSlice";
+import { resetSelected, deleteSelected, undo, redo } from "./redux/canvasSlice";
 import Workspace from "./Workspace";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 
@@ -43,4 +43,5 @@ const keyMap = {
     d: deleteSelected,
     Escape: resetSelected,
     u: undo,
+    r: redo,
 } as Record<string, ActionCreatorWithoutPayload>;

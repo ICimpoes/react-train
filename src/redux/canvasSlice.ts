@@ -82,6 +82,14 @@ export const canvasSlice = createSlice({
             state.history.present--;
             state.elements = state.history.elements[state.history.present];
         },
+        redo: (state) => {
+            state.activeElementKey = undefined;
+            if (state.history.present >= state.history.elements.length - 1) {
+                return;
+            }
+            state.history.present++;
+            state.elements = state.history.elements[state.history.present];
+        },
     },
 });
 
@@ -110,6 +118,7 @@ export const {
     resetSelected,
     deleteSelected,
     undo,
+    redo,
 } = canvasSlice.actions;
 
 export default canvasSlice.reducer;
