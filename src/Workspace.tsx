@@ -1,5 +1,5 @@
 import React, { DragEvent, MouseEvent, useState } from "react";
-import { add, move, select } from "./redux/canvasSlice";
+import { add, move, moveEnd, select } from "./redux/canvasSlice";
 import { selectCanvasElements, selectDragElement } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
@@ -28,8 +28,12 @@ export default function Workspace() {
     );
 
     const resetSelectedElement = React.useCallback(() => {
+        if (!selectedElementKey) {
+            return;
+        }
+        dispatch(moveEnd());
         setSelectedElementKey(undefined);
-    }, [setSelectedElementKey]);
+    }, [selectedElementKey, setSelectedElementKey]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {

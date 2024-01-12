@@ -55,6 +55,9 @@ export const canvasSlice = createSlice({
         move: (state, action: PayloadAction<ElementPosition>) => {
             state.elements[action.payload.key].point = action.payload.point;
         },
+        moveEnd: (state) => {
+            addToHistory(state);
+        },
         select: (state, action: PayloadAction<string>) => {
             resetActive(state);
             state.elements[action.payload].active = true;
@@ -99,7 +102,14 @@ function addToHistory(state: CanvasStoreState) {
     state.history.elements.push(state.elements);
 }
 
-export const { add, move, select, resetSelected, deleteSelected, undo } =
-    canvasSlice.actions;
+export const {
+    add,
+    move,
+    moveEnd,
+    select,
+    resetSelected,
+    deleteSelected,
+    undo,
+} = canvasSlice.actions;
 
 export default canvasSlice.reducer;
