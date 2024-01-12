@@ -55,7 +55,18 @@ export const canvasSlice = createSlice({
         move: (state, action: PayloadAction<ElementPosition>) => {
             state.elements[action.payload.key].point = action.payload.point;
         },
-        moveEnd: (state) => {
+        moveEnd: (state, action: PayloadAction<string>) => {
+            const previousPosition =
+                state.history.elements[state.history.present][action.payload]
+                    .point;
+            const currentPosition = state.elements[action.payload].point;
+            console.log(currentPosition, previousPosition);
+            if (
+                previousPosition.x === currentPosition.x &&
+                previousPosition.y === currentPosition.y
+            ) {
+                return;
+            }
             addToHistory(state);
         },
         select: (state, action: PayloadAction<string>) => {
