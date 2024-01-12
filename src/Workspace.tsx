@@ -1,51 +1,49 @@
-import React, { useState, DragEvent, MouseEvent } from "react";
-import { Shapes, ShapeType } from "./Shapes";
+import React, { DragEvent, MouseEvent, useState } from "react";
+import { add, move } from "./redux/canvasSlice";
+import { selectCanvasElements, selectDragElement } from "./redux/store";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { Shapes } from "./Shapes";
+import { Point } from "./models";
 
-interface canvasShape {
-    shape: ShapeType;
-    point: {
-        x: number;
-        y: number;
-    };
-}
+export default function Workspace() {
+    const dispatch = useAppDispatch();
+    const canvasElements = useAppSelector(selectCanvasElements);
+    const dragElement = useAppSelector(selectDragElement);
 
-export default function Workspace(props: { draggedShape?: ShapeType }) {
-    const [canvasElements, setCanvasElements] = useState<canvasShape[]>([]);
-
-    const [dragElement, setDragElement] = useState<number>();
+    const [selectedElementKey, setSelectedElementKey] = useState<string>();
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            if (dragElement !== undefined) {
-                const elements = canvasElements.slice();
-                elements[dragElement].point = {
-                    x: e.nativeEvent.offsetX,
-                    y: e.nativeEvent.offsetY,
-                };
-                setCanvasElements(elements);
+            if (!selectedElementKey) {
+                return;
             }
+            dispatch(
+                move({
+                    key: selectedElementKey,
+                    point: eventToPoint(e),
+                })
+            );
         },
-        [canvasElements, dragElement]
+        [selectedElementKey, dispatch, move, eventToPoint]
     );
 
-    const resetDragElement = React.useCallback(() => {
-        setDragElement(undefined);
-    }, []);
+    const resetSelectedElement = React.useCallback(() => {
+        setSelectedElementKey(undefined);
+    }, [setSelectedElementKey]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
-            if (props.draggedShape) {
-                const canvasElement = {
-                    shape: props.draggedShape,
-                    point: {
-                        x: e.nativeEvent.offsetX,
-                        y: e.nativeEvent.offsetY,
-                    },
-                };
-                setCanvasElements([...canvasElements, canvasElement]);
+            if (!dragElement) {
+                return;
             }
+            dispatch(
+                add({
+                    shape: dragElement,
+                    point: eventToPoint(e),
+                })
+            );
         },
-        [canvasElements, props.draggedShape]
+        [dragElement, dispatch, add, eventToPoint]
     );
 
     const handleDragOver = React.useCallback((e: DragEvent) => {
@@ -59,22 +57,31 @@ export default function Workspace(props: { draggedShape?: ShapeType }) {
                 onDragOver={handleDragOver}
                 onDrop={handleOnDrop}
                 onMouseMove={handleMouseMove}
-                onMouseUp={resetDragElement}
-                onMouseLeave={resetDragElement}
+                onMouseUp={resetSelectedElement}
+                onMouseLeave={resetSelectedElement}
                 className="canvas"
                 viewBox="0 0 1200 600"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {canvasElements.map((element, idx) => {
-                    return Shapes[element.shape]({
-                        point: element.point,
-                        onMouseDown: () => {
-                            setDragElement(idx);
-                        },
-                    });
+                {Object.values(canvasElements).map((element) => {
+                    const Shape = Shapes[element.shape];
+                    const handleMouseDown = () => {
+                        setSelectedElementKey(element.key);
+                    };
+                    return (
+                        <Shape
+                            key={element.key}
+                            point={element.point}
+                            onMouseDown={handleMouseDown}
+                        />
+                    );
                 })}
             </svg>
         </div>
     );
+}
+
+function eventToPoint(e: MouseEvent): Point {
+    return { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
 }

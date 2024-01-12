@@ -1,51 +1,22 @@
 import React from "react";
-import { v4 as uuidv4 } from "uuid";
+import { Point } from "./models";
 
 export const Shapes = {
-    circle: (props: shapeProps) => {
-        return (
-            <Circle
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
-    },
-    square: (props: shapeProps) => {
-        return (
-            <Square
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
-    },
-    triangle: (props: shapeProps) => {
-        return (
-            <Triangle
-                key={uuidv4()}
-                onMouseDown={props.onMouseDown}
-                point={props.point}
-            />
-        );
-    },
+    circle: Circle,
+    square: Square,
+    triangle: Triangle,
 };
 
 export type ShapeType = keyof typeof Shapes;
 
 export const ShapeTypes: ShapeType[] = Object.keys(Shapes) as ShapeType[];
 
-interface Point {
-    x: number;
-    y: number;
-}
-
-interface shapeProps {
+interface ShapeProps {
     point: Point;
     onMouseDown?: () => void;
 }
 
-function Circle(props: shapeProps): React.JSX.Element {
+function Circle(props: ShapeProps): React.JSX.Element {
     return (
         <circle
             className="svg-shape"
@@ -57,7 +28,7 @@ function Circle(props: shapeProps): React.JSX.Element {
     );
 }
 
-function Square(props: shapeProps): React.JSX.Element {
+function Square(props: ShapeProps): React.JSX.Element {
     return (
         <rect
             className="svg-shape"
@@ -70,7 +41,7 @@ function Square(props: shapeProps): React.JSX.Element {
     );
 }
 
-function Triangle(props: shapeProps): React.JSX.Element {
+function Triangle(props: ShapeProps): React.JSX.Element {
     const calculatePoints = React.useCallback((point: Point): string => {
         const { x, y } = point;
         return `${x - 20},${y + 20} ${x},${y - 20} ${x + 20},${y + 20}`;
