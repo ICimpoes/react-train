@@ -11,7 +11,7 @@ export default function App() {
 
     const keyMap = {
         d: () => {
-            dispatch(deleteSelected(""));
+            dispatch(deleteSelected());
         },
         u: () => {
             dispatch(undo());

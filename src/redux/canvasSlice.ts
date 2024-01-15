@@ -4,10 +4,10 @@ import { ShapeType } from "../Shapes";
 import { v4 as uuid } from "uuid";
 import {
     History,
-    historyCurrent,
+    currentHistory,
     addHitory,
     newHistory,
-    reduHistory,
+    redoHistory,
     undoHistory,
 } from "./history";
 
@@ -49,26 +49,20 @@ export const canvasSlice = createSlice({
                 point: action.payload.point,
             };
             state.items[item.key] = item;
-            addHitory(state.history, action.type, {
-                items: state.items,
-                activeItemKey: state.activeItemKey,
-            });
+            addToHistory(state, action.type);
         },
         move: (state, action: PayloadAction<ItemPosition>) => {
             state.items[action.payload.key].point = action.payload.point;
         },
         moveEnd: (state, action: PayloadAction<string>) => {
-            const previous = historyCurrent(state.history).items[
+            const previous = currentHistory(state.history).items[
                 action.payload
             ];
             const current = state.items[action.payload];
             if (isSamePosition(previous, current)) {
                 return;
             }
-            addHitory(state.history, action.type, {
-                items: state.items,
-                activeItemKey: state.activeItemKey,
-            });
+            addToHistory(state, action.type);
         },
         select: (state, action: PayloadAction<string>) => {
             resetActive(state);
@@ -78,34 +72,27 @@ export const canvasSlice = createSlice({
         resetSelected: (state) => {
             resetActive(state);
         },
-        deleteSelected: (state, action: PayloadAction<unknown>) => {
+        deleteSelected: (state) => {
             if (!state.activeItemKey) {
                 return;
             }
             delete state.items[state.activeItemKey];
             state.activeItemKey = undefined;
-            addHitory(state.history, action.type, {
-                items: state.items,
-                activeItemKey: state.activeItemKey,
-            });
+            addToHistory(state, deleteSelected.type);
         },
         undo: (state) => {
             const previous = undoHistory(state.history);
             if (previous === undefined) {
                 return;
             }
-            state.items = previous.items;
-            state.activeItemKey = previous.activeItemKey;
-            resetActive(state);
+            setFromHistoryItems(state, previous);
         },
         redo: (state) => {
-            const next = reduHistory(state.history);
+            const next = redoHistory(state.history);
             if (next === undefined) {
                 return;
             }
-            state.items = next.items;
-            state.activeItemKey = next.activeItemKey;
-            resetActive(state);
+            setFromHistoryItems(state, next);
         },
         setFromHistory: (state, action: PayloadAction<number>) => {
             if (
@@ -115,13 +102,24 @@ export const canvasSlice = createSlice({
                 return;
             }
             state.history.current = action.payload;
-            const history = historyCurrent(state.history);
-            state.items = history.items;
-            state.activeItemKey = history.activeItemKey;
-            resetActive(state);
+            const history = currentHistory(state.history);
+            setFromHistoryItems(state, history);
         },
     },
 });
+
+function addToHistory(state: CanvasStoreState, action: string) {
+    addHitory(state.history, action, {
+        items: state.items,
+        activeItemKey: state.activeItemKey,
+    });
+}
+
+function setFromHistoryItems(state: CanvasStoreState, history: CanvasItems) {
+    state.items = history.items;
+    state.activeItemKey = history.activeItemKey;
+    resetActive(state);
+}
 
 function resetActive(state: CanvasStoreState) {
     if (!state.activeItemKey) {

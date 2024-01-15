@@ -27,7 +27,7 @@ export function newHistory<T>(initial: T): History<T> {
     };
 }
 
-export function historyCurrent<T>(history: History<T>): T {
+export function currentHistory<T>(history: History<T>): T {
     return history.items[history.current].value;
 }
 
@@ -50,14 +50,14 @@ export function undoHistory<T>(history: History<T>): T | undefined {
         return;
     }
     history.current = currentLink.previous;
-    return historyCurrent(history);
+    return currentHistory(history);
 }
 
-export function reduHistory<T>(history: History<T>): T | undefined {
+export function redoHistory<T>(history: History<T>): T | undefined {
     const currentLink = history.links[history.current];
     if (currentLink.next.length === 0) {
         return;
     }
     history.current = currentLink.next[currentLink.next.length - 1];
-    return historyCurrent(history);
+    return currentHistory(history);
 }
