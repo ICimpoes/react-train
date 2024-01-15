@@ -2,14 +2,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Point } from "../models";
 import { ShapeType } from "../Shapes";
 import { v4 as uuid } from "uuid";
+import {
+    History,
+    historyCurrent,
+    addHitory,
+    newHistory,
+    reduHistory,
+    undoHistory,
+} from "./history";
 
-interface CanvasStoreState {
-    items: CanvasItems;
+type CanvasStoreState = CanvasItems & { history: History<CanvasItems> };
+
+interface CanvasItems {
+    items: Record<string, CanvasItem>;
     activeItemKey?: string;
-    history: CanvasHistory;
 }
-
-export type CanvasItems = Record<string, CanvasItem>;
 
 interface CanvasItem {
     key: string;
@@ -28,19 +35,11 @@ interface NewItem {
     point: Point;
 }
 
-interface CanvasHistory {
-    items: CanvasItems[];
-    present: number;
-}
-
 export const canvasSlice = createSlice({
     name: "canvas",
     initialState: {
         items: {},
-        history: {
-            items: [{}],
-            present: 0,
-        },
+        history: newHistory<CanvasItems>({ items: {} }),
     } as CanvasStoreState,
     reducers: {
         add: (state, action: PayloadAction<NewItem>) => {
@@ -50,19 +49,26 @@ export const canvasSlice = createSlice({
                 point: action.payload.point,
             };
             state.items[item.key] = item;
-            addToHistory(state);
+            addHitory(state.history, action.type, {
+                items: state.items,
+                activeItemKey: state.activeItemKey,
+            });
         },
         move: (state, action: PayloadAction<ItemPosition>) => {
             state.items[action.payload.key].point = action.payload.point;
         },
         moveEnd: (state, action: PayloadAction<string>) => {
-            const previous =
-                state.history.items[state.history.present][action.payload];
+            const previous = historyCurrent(state.history).items[
+                action.payload
+            ];
             const current = state.items[action.payload];
             if (isSamePosition(previous, current)) {
                 return;
             }
-            addToHistory(state);
+            addHitory(state.history, action.type, {
+                items: state.items,
+                activeItemKey: state.activeItemKey,
+            });
         },
         select: (state, action: PayloadAction<string>) => {
             resetActive(state);
@@ -72,29 +78,47 @@ export const canvasSlice = createSlice({
         resetSelected: (state) => {
             resetActive(state);
         },
-        deleteSelected: (state) => {
+        deleteSelected: (state, action: PayloadAction<unknown>) => {
             if (!state.activeItemKey) {
                 return;
             }
             delete state.items[state.activeItemKey];
             state.activeItemKey = undefined;
-            addToHistory(state);
+            addHitory(state.history, action.type, {
+                items: state.items,
+                activeItemKey: state.activeItemKey,
+            });
         },
         undo: (state) => {
-            state.activeItemKey = undefined;
-            if (state.history.present == 0) {
+            const previous = undoHistory(state.history);
+            if (previous === undefined) {
                 return;
             }
-            state.history.present--;
-            state.items = state.history.items[state.history.present];
+            state.items = previous.items;
+            state.activeItemKey = previous.activeItemKey;
+            resetActive(state);
         },
         redo: (state) => {
-            state.activeItemKey = undefined;
-            if (state.history.present >= state.history.items.length - 1) {
+            const next = reduHistory(state.history);
+            if (next === undefined) {
                 return;
             }
-            state.history.present++;
-            state.items = state.history.items[state.history.present];
+            state.items = next.items;
+            state.activeItemKey = next.activeItemKey;
+            resetActive(state);
+        },
+        setFromHistory: (state, action: PayloadAction<number>) => {
+            if (
+                action.payload < 0 ||
+                action.payload >= state.history.items.length
+            ) {
+                return;
+            }
+            state.history.current = action.payload;
+            const history = historyCurrent(state.history);
+            state.items = history.items;
+            state.activeItemKey = history.activeItemKey;
+            resetActive(state);
         },
     },
 });
@@ -107,14 +131,8 @@ function resetActive(state: CanvasStoreState) {
     state.activeItemKey = undefined;
 }
 
-function addToHistory(state: CanvasStoreState) {
-    state.history.present++;
-    state.history.items = state.history.items.slice(0, state.history.present);
-    state.history.items.push(state.items);
-}
-
-function isSamePosition(el1: CanvasItem, el2: CanvasItem): boolean {
-    return el1.point.x == el2.point.x && el1.point.y == el2.point.y;
+function isSamePosition(a: CanvasItem, b: CanvasItem): boolean {
+    return a.point.x == b.point.x && a.point.y == b.point.y;
 }
 
 export const {
@@ -126,6 +144,7 @@ export const {
     deleteSelected,
     undo,
     redo,
+    setFromHistory,
 } = canvasSlice.actions;
 
 export default canvasSlice.reducer;

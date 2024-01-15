@@ -15,4 +15,6 @@ export const selectCanvasItems = (state: RootState) => state.canvas.items;
 
 export const selectDragItem = (state: RootState) => state.drag.shape;
 
+export const selectHistoryItems = (state: RootState) => state.canvas.history;
+
 export type AppDispatch = typeof shapesStore.dispatch;

@@ -54,3 +54,7 @@ body {
 .svg-shape.active {
     fill: #ff0000;
 }
+
+.history.node > circle {
+  fill: green;
+}
