@@ -55,6 +55,10 @@ body {
     fill: #ff0000;
 }
 
+.history.tree {
+    width: 50em;
+}
+
 .history.node > circle {
   fill: green;
 }

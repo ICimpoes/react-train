@@ -1,8 +1,7 @@
 import { HierarchyPointNode } from "d3-hierarchy";
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import Tree, { RawNodeDatum, TreeNodeDatum } from "react-d3-tree";
 import { setFromHistory } from "./redux/canvasSlice";
-import { History } from "./redux/history";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { selectHistoryItems } from "./redux/store";
 
@@ -13,22 +12,48 @@ export default function HistoryTree(
     props: HistoryTreeProps
 ): React.JSX.Element {
     const dispatch = useAppDispatch();
-    const historyItems = useAppSelector(selectHistoryItems);
+    const history = useAppSelector(selectHistoryItems);
 
-    const handleNodeClick = (node: HierarchyPointNode<TreeNodeDatum>) => {
-        if (node.data.attributes === undefined) {
-            return;
-        }
-        const idx = Number(node.data.attributes["idx"]);
-        dispatch(setFromHistory(idx));
-    };
+    const historyToTree = React.useCallback(
+        (idx: number): RawNodeDatum => {
+            const now = new Date().getTime();
+            const item = history.items[idx];
+            const node = {
+                name: item.action,
+                children: [],
+                attributes: {
+                    idx: idx,
+                    time: timeDiff(now - item.time),
+                },
+            } as RawNodeDatum;
+            if (idx === history.current) {
+                node.attributes!["current"] = true;
+            }
+            for (const i of history.links[idx].next) {
+                node.children?.push(historyToTree(i));
+            }
+            return node;
+        },
+        [history, timeDiff]
+    );
+
+    const handleNodeClick = React.useCallback(
+        (node: HierarchyPointNode<TreeNodeDatum>) => {
+            if (node.data.attributes === undefined) {
+                return;
+            }
+            const idx = Number(node.data.attributes["idx"]);
+            dispatch(setFromHistory(idx));
+        },
+        [dispatch, setFromHistory]
+    );
 
     return (
-        <div id="treeWrapper" style={{ width: "50em" }} hidden={props.hidden}>
+        <div className="history tree" hidden={props.hidden}>
             <Tree
                 collapsible={false}
-                onNodeClick={handleNodeClick as any}
-                data={historyToTree(0, historyItems)}
+                onNodeClick={handleNodeClick}
+                data={historyToTree(0)}
                 orientation={"vertical"}
                 rootNodeClassName="history node"
                 branchNodeClassName="history node"
@@ -38,29 +63,6 @@ export default function HistoryTree(
     );
 }
 
-type H = History<unknown>;
-
-function historyToTree(idx: number, history: H): RawNodeDatum {
-    const now = new Date().getTime();
-    const historyItem = history.items[idx];
-    const diff = now - historyItem.time;
-    const node = {
-        name: historyItem.action,
-        children: [],
-        attributes: {
-            idx: idx,
-            time: timeDiff(diff),
-        },
-    } as RawNodeDatum;
-    if (idx === history.current) {
-        node.attributes!["current"] = true;
-    }
-    for (const i of history.links[idx].next) {
-        node.children?.push(historyToTree(i, history));
-    }
-    return node;
-}
-
 function timeDiff(diffMs: number): string {
     const diffSec = Math.round(diffMs / 1000);
     if (diffSec < 1) {
@@ -68,11 +70,11 @@ function timeDiff(diffMs: number): string {
     }
     const diffMins = Math.round(diffSec / 60);
     if (diffMins < 1) {
-        return `${diffSec} S`;
+        return `${diffSec} sec`;
     }
     const diffHours = Math.round(diffMins / 60);
     if (diffHours < 1) {
-        return `${diffMins} M`;
+        return `${diffMins} min`;
     }
-    return `${diffHours} H`;
+    return `${diffHours} hour`;
 }
