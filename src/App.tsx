@@ -27,7 +27,7 @@ export default function App() {
         document.addEventListener("mousedown", handleMouseDown);
         return () => {
             document.removeEventListener("keyup", handleKeyUp);
-            document.removeEventListener("keyup", handleMouseDown);
+            document.removeEventListener("mousedown", handleMouseDown);
         };
     }, []);
 

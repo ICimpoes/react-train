@@ -4,121 +4,117 @@ import { ShapeType } from "../Shapes";
 import { v4 as uuid } from "uuid";
 
 interface CanvasStoreState {
-    elements: CanvasElements;
-    activeElementKey?: string;
+    items: CanvasItems;
+    activeItemKey?: string;
     history: CanvasHistory;
 }
 
-type CanvasElements = Record<string, CanvasElement>;
+export type CanvasItems = Record<string, CanvasItem>;
 
-interface CanvasElement {
+interface CanvasItem {
     key: string;
     shape: ShapeType;
     point: Point;
     active?: boolean;
 }
 
-interface ElementPosition {
+interface ItemPosition {
     key: string;
     point: Point;
 }
 
-interface NewElement {
+interface NewItem {
     shape: ShapeType;
     point: Point;
 }
 
 interface CanvasHistory {
-    elements: CanvasElements[];
+    items: CanvasItems[];
     present: number;
 }
 
 export const canvasSlice = createSlice({
     name: "canvas",
     initialState: {
-        elements: {},
+        items: {},
         history: {
-            elements: [{}],
+            items: [{}],
             present: 0,
         },
     } as CanvasStoreState,
     reducers: {
-        add: (state, action: PayloadAction<NewElement>) => {
-            const element = {
+        add: (state, action: PayloadAction<NewItem>) => {
+            const item = {
                 key: uuid(),
                 shape: action.payload.shape,
                 point: action.payload.point,
             };
-            state.elements[element.key] = element;
+            state.items[item.key] = item;
             addToHistory(state);
         },
-        move: (state, action: PayloadAction<ElementPosition>) => {
-            state.elements[action.payload.key].point = action.payload.point;
+        move: (state, action: PayloadAction<ItemPosition>) => {
+            state.items[action.payload.key].point = action.payload.point;
         },
         moveEnd: (state, action: PayloadAction<string>) => {
-            const previousPosition =
-                state.history.elements[state.history.present][action.payload]
-                    .point;
-            const currentPosition = state.elements[action.payload].point;
-            console.log(currentPosition, previousPosition);
-            if (
-                previousPosition.x === currentPosition.x &&
-                previousPosition.y === currentPosition.y
-            ) {
+            const previous =
+                state.history.items[state.history.present][action.payload];
+            const current = state.items[action.payload];
+            if (isSamePosition(previous, current)) {
                 return;
             }
             addToHistory(state);
         },
         select: (state, action: PayloadAction<string>) => {
             resetActive(state);
-            state.elements[action.payload].active = true;
-            state.activeElementKey = action.payload;
+            state.items[action.payload].active = true;
+            state.activeItemKey = action.payload;
         },
         resetSelected: (state) => {
             resetActive(state);
         },
         deleteSelected: (state) => {
-            if (!state.activeElementKey) {
+            if (!state.activeItemKey) {
                 return;
             }
-            delete state.elements[state.activeElementKey];
-            state.activeElementKey = undefined;
+            delete state.items[state.activeItemKey];
+            state.activeItemKey = undefined;
             addToHistory(state);
         },
         undo: (state) => {
-            state.activeElementKey = undefined;
+            state.activeItemKey = undefined;
             if (state.history.present == 0) {
                 return;
             }
             state.history.present--;
-            state.elements = state.history.elements[state.history.present];
+            state.items = state.history.items[state.history.present];
         },
         redo: (state) => {
-            state.activeElementKey = undefined;
-            if (state.history.present >= state.history.elements.length - 1) {
+            state.activeItemKey = undefined;
+            if (state.history.present >= state.history.items.length - 1) {
                 return;
             }
             state.history.present++;
-            state.elements = state.history.elements[state.history.present];
+            state.items = state.history.items[state.history.present];
         },
     },
 });
 
 function resetActive(state: CanvasStoreState) {
-    if (!state.activeElementKey) {
+    if (!state.activeItemKey) {
         return;
     }
-    state.elements[state.activeElementKey].active = undefined;
-    state.activeElementKey = undefined;
+    state.items[state.activeItemKey].active = undefined;
+    state.activeItemKey = undefined;
 }
 
 function addToHistory(state: CanvasStoreState) {
     state.history.present++;
-    state.history.elements = state.history.elements.slice(
-        0,
-        state.history.present
-    );
-    state.history.elements.push(state.elements);
+    state.history.items = state.history.items.slice(0, state.history.present);
+    state.history.items.push(state.items);
+}
+
+function isSamePosition(el1: CanvasItem, el2: CanvasItem): boolean {
+    return el1.point.x == el2.point.x && el1.point.y == el2.point.y;
 }
 
 export const {

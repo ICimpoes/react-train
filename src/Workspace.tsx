@@ -1,53 +1,53 @@
 import React, { DragEvent, MouseEvent, useState } from "react";
 import { add, move, moveEnd, select } from "./redux/canvasSlice";
-import { selectCanvasElements, selectDragElement } from "./redux/store";
+import { selectCanvasItems, selectDragItem } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { Shapes } from "./Shapes";
 import { Point } from "./models";
 
 export default function Workspace() {
     const dispatch = useAppDispatch();
-    const canvasElements = useAppSelector(selectCanvasElements);
-    const dragElement = useAppSelector(selectDragElement);
+    const canvasItems = useAppSelector(selectCanvasItems);
+    const dragItem = useAppSelector(selectDragItem);
 
-    const [selectedElementKey, setSelectedElementKey] = useState<string>();
+    const [selectedItemKey, setSelectedItemKey] = useState<string>();
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            if (!selectedElementKey) {
+            if (!selectedItemKey) {
                 return;
             }
             dispatch(
                 move({
-                    key: selectedElementKey,
+                    key: selectedItemKey,
                     point: eventToPoint(e),
                 })
             );
         },
-        [selectedElementKey, dispatch, move, eventToPoint]
+        [selectedItemKey, dispatch, move, eventToPoint]
     );
 
-    const resetSelectedElement = React.useCallback(() => {
-        if (!selectedElementKey) {
+    const resetSelectedItem = React.useCallback(() => {
+        if (!selectedItemKey) {
             return;
         }
-        dispatch(moveEnd(selectedElementKey));
-        setSelectedElementKey(undefined);
-    }, [selectedElementKey, dispatch, moveEnd, setSelectedElementKey]);
+        dispatch(moveEnd(selectedItemKey));
+        setSelectedItemKey(undefined);
+    }, [selectedItemKey, dispatch, moveEnd, setSelectedItemKey]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
-            if (!dragElement) {
+            if (!dragItem) {
                 return;
             }
             dispatch(
                 add({
-                    shape: dragElement,
+                    shape: dragItem,
                     point: eventToPoint(e),
                 })
             );
         },
-        [dragElement, dispatch, add, eventToPoint]
+        [dragItem, dispatch, add, eventToPoint]
     );
 
     const handleDragOver = React.useCallback((e: DragEvent) => {
@@ -61,25 +61,25 @@ export default function Workspace() {
                 onDragOver={handleDragOver}
                 onDrop={handleOnDrop}
                 onMouseMove={handleMouseMove}
-                onMouseUp={resetSelectedElement}
-                onMouseLeave={resetSelectedElement}
+                onMouseUp={resetSelectedItem}
+                onMouseLeave={resetSelectedItem}
                 className="canvas"
                 viewBox="0 0 1200 600"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {Object.values(canvasElements).map((element) => {
-                    const Shape = Shapes[element.shape];
+                {Object.values(canvasItems).map((item) => {
+                    const Shape = Shapes[item.shape];
                     const handleMouseDown = (e: MouseEvent) => {
                         e.stopPropagation();
-                        setSelectedElementKey(element.key);
-                        dispatch(select(element.key));
+                        setSelectedItemKey(item.key);
+                        dispatch(select(item.key));
                     };
                     return (
                         <Shape
-                            active={element.active}
-                            key={element.key}
-                            point={element.point}
+                            active={item.active}
+                            key={item.key}
+                            point={item.point}
                             onMouseDown={handleMouseDown}
                         />
                     );
