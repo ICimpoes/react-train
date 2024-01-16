@@ -9,6 +9,10 @@ import App from "./App";
 import { Provider } from "react-redux";
 import { shapesStore } from "./redux/store";
 
+jest.mock("./HistoryTree", () => () => {
+    return <></>;
+});
+
 describe("<App />", () => {
     beforeEach(() => {
         render(
