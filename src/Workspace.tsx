@@ -2,38 +2,38 @@ import React, { DragEvent, MouseEvent, useState } from "react";
 import { add, move, moveEnd, select } from "./redux/canvasSlice";
 import { selectCanvasItems, selectDragItem } from "./redux/store";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
-import { Shapes } from "./Shapes";
 import { Point } from "./models";
+import CanvasShape from "./CanvasShape";
 
 export default function Workspace() {
     const dispatch = useAppDispatch();
     const canvasItems = useAppSelector(selectCanvasItems);
     const dragItem = useAppSelector(selectDragItem);
 
-    const [selectedItemKey, setSelectedItemKey] = useState<string>();
+    const [movingItemId, setMovingItemId] = useState<string>();
 
     const handleMouseMove = React.useCallback(
         (e: MouseEvent) => {
-            if (!selectedItemKey) {
+            if (!movingItemId) {
                 return;
             }
             dispatch(
                 move({
-                    key: selectedItemKey,
+                    id: movingItemId,
                     point: eventToPoint(e),
                 })
             );
         },
-        [selectedItemKey, dispatch, move, eventToPoint]
+        [movingItemId, dispatch, move, eventToPoint]
     );
 
-    const resetSelectedItem = React.useCallback(() => {
-        if (!selectedItemKey) {
+    const handleShapeMoveEnd = React.useCallback(() => {
+        if (!movingItemId) {
             return;
         }
-        dispatch(moveEnd(selectedItemKey));
-        setSelectedItemKey(undefined);
-    }, [selectedItemKey, dispatch, moveEnd, setSelectedItemKey]);
+        dispatch(moveEnd(movingItemId));
+        setMovingItemId(undefined);
+    }, [movingItemId, dispatch, moveEnd, setMovingItemId]);
 
     const handleOnDrop = React.useCallback(
         (e: DragEvent) => {
@@ -54,6 +54,14 @@ export default function Workspace() {
         e.preventDefault();
     }, []);
 
+    const handleShapeMouseDown = React.useCallback(
+        (id: string) => {
+            setMovingItemId(id);
+            dispatch(select(id));
+        },
+        [setMovingItemId, dispatch, select]
+    );
+
     return (
         <div data-testid="workspace" className="workspace">
             <svg
@@ -61,26 +69,19 @@ export default function Workspace() {
                 onDragOver={handleDragOver}
                 onDrop={handleOnDrop}
                 onMouseMove={handleMouseMove}
-                onMouseUp={resetSelectedItem}
-                onMouseLeave={resetSelectedItem}
+                onMouseUp={handleShapeMoveEnd}
+                onMouseLeave={handleShapeMoveEnd}
                 className="canvas"
                 viewBox="0 0 1200 600"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
             >
                 {Object.values(canvasItems).map((item) => {
-                    const Shape = Shapes[item.shape];
-                    const handleMouseDown = (e: MouseEvent) => {
-                        e.stopPropagation();
-                        setSelectedItemKey(item.key);
-                        dispatch(select(item.key));
-                    };
                     return (
-                        <Shape
-                            active={item.active}
-                            key={item.key}
-                            point={item.point}
-                            onMouseDown={handleMouseDown}
+                        <CanvasShape
+                            key={item.id}
+                            item={item}
+                            onMouseDown={handleShapeMouseDown}
                         />
                     );
                 })}

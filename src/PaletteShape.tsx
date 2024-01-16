@@ -33,7 +33,7 @@ export default function PaletteShape(props: PaletteShapeProps) {
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
                 >
-                    <Shape point={{ x: 25, y: 25 }} />
+                    <Shape className="svg-shape" point={{ x: 25, y: 25 }} />
                 </svg>
             </div>
         </div>

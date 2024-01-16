@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Point } from "../models";
+import { CanvasItem, Point } from "../models";
 import { ShapeType } from "../Shapes";
 import { v4 as uuid } from "uuid";
 import {
@@ -18,15 +18,8 @@ interface CanvasItems {
     activeItemKey?: string;
 }
 
-interface CanvasItem {
-    key: string;
-    shape: ShapeType;
-    point: Point;
-    active?: boolean;
-}
-
 interface ItemPosition {
-    key: string;
+    id: string;
     point: Point;
 }
 
@@ -44,15 +37,15 @@ export const canvasSlice = createSlice({
     reducers: {
         add: (state, action: PayloadAction<NewItem>) => {
             const item = {
-                key: uuid(),
+                id: uuid(),
                 shape: action.payload.shape,
                 point: action.payload.point,
             };
-            state.items[item.key] = item;
+            state.items[item.id] = item;
             addToHistory(state, action.type);
         },
         move: (state, action: PayloadAction<ItemPosition>) => {
-            state.items[action.payload.key].point = action.payload.point;
+            state.items[action.payload.id].point = action.payload.point;
         },
         moveEnd: (state, action: PayloadAction<string>) => {
             const previous = currentHistory(state.history).items[
