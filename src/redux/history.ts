@@ -1,6 +1,6 @@
-interface Link {
-    previous?: number;
-    next: number[];
+interface Node {
+    parent?: number;
+    children: number[];
 }
 
 export interface History<T> {
@@ -9,8 +9,8 @@ export interface History<T> {
         time: number;
         action: string;
     }[];
-    links: Link[];
-    current: number;
+    nodes: Node[];
+    currentNode: number;
 }
 
 export function newHistory<T>(initial: T): History<T> {
@@ -22,13 +22,13 @@ export function newHistory<T>(initial: T): History<T> {
                 time: new Date().getTime(),
             },
         ],
-        links: [{ next: [] }],
-        current: 0,
+        nodes: [{ children: [] }],
+        currentNode: 0,
     };
 }
 
 export function currentHistory<T>(history: History<T>): T {
-    return history.items[history.current].value;
+    return history.items[history.currentNode].value;
 }
 
 export function addHitory<T>(history: History<T>, action: string, value: T) {
@@ -39,25 +39,25 @@ export function addHitory<T>(history: History<T>, action: string, value: T) {
         time: new Date().getTime(),
     };
     history.items.push(item);
-    history.links[history.current].next.push(next);
-    history.links.push({ previous: history.current, next: [] });
-    history.current = next;
+    history.nodes[history.currentNode].children.push(next);
+    history.nodes.push({ parent: history.currentNode, children: [] });
+    history.currentNode = next;
 }
 
 export function undoHistory<T>(history: History<T>): T | undefined {
-    const currentLink = history.links[history.current];
-    if (currentLink.previous === undefined) {
+    const currentNode = history.nodes[history.currentNode];
+    if (currentNode.parent === undefined) {
         return;
     }
-    history.current = currentLink.previous;
+    history.currentNode = currentNode.parent;
     return currentHistory(history);
 }
 
 export function redoHistory<T>(history: History<T>): T | undefined {
-    const currentLink = history.links[history.current];
-    if (currentLink.next.length === 0) {
+    const currentLink = history.nodes[history.currentNode];
+    if (currentLink.children.length === 0) {
         return;
     }
-    history.current = currentLink.next[currentLink.next.length - 1];
+    history.currentNode = currentLink.children[currentLink.children.length - 1];
     return currentHistory(history);
 }

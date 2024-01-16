@@ -18,18 +18,18 @@ export default function HistoryTree(
         (idx: number): RawNodeDatum => {
             const now = new Date().getTime();
             const item = history.items[idx];
-            const node = {
+            const node: RawNodeDatum = {
                 name: item.action,
                 children: [],
                 attributes: {
                     idx: idx,
                     time: timeDiff(now - item.time),
                 },
-            } as RawNodeDatum;
-            if (idx === history.current) {
+            };
+            if (idx === history.currentNode) {
                 node.attributes!["current"] = true;
             }
-            for (const i of history.links[idx].next) {
+            for (const i of history.nodes[idx].children) {
                 node.children?.push(historyToTree(i));
             }
             return node;

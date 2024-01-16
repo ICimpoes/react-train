@@ -101,7 +101,7 @@ export const canvasSlice = createSlice({
             ) {
                 return;
             }
-            state.history.current = action.payload;
+            state.history.currentNode = action.payload;
             const history = currentHistory(state.history);
             setFromHistoryItems(state, history);
         },
