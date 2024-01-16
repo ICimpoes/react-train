@@ -14,13 +14,10 @@ export interface CanvasItem {
 
 export function classNames(...names: (string | false)[]): string {
     const name = names.reduce((prev, curr) => {
-        if (!curr) {
-            return prev;
+        if (curr && prev) {
+            return prev + " " + curr;
         }
-        if (!prev) {
-            return curr;
-        }
-        return prev + " " + curr;
+        return curr || prev;
     });
     return name ? name : "";
 }
