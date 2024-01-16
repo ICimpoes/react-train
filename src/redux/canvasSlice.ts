@@ -15,7 +15,7 @@ type CanvasStoreState = CanvasItems & { history: History<CanvasItems> };
 
 interface CanvasItems {
     items: Record<string, CanvasItem>;
-    activeItemKey?: string;
+    activeItemId?: string;
 }
 
 interface ItemPosition {
@@ -60,17 +60,17 @@ export const canvasSlice = createSlice({
         select: (state, action: PayloadAction<string>) => {
             resetActive(state);
             state.items[action.payload].active = true;
-            state.activeItemKey = action.payload;
+            state.activeItemId = action.payload;
         },
         resetSelected: (state) => {
             resetActive(state);
         },
         deleteSelected: (state) => {
-            if (!state.activeItemKey) {
+            if (!state.activeItemId) {
                 return;
             }
-            delete state.items[state.activeItemKey];
-            state.activeItemKey = undefined;
+            delete state.items[state.activeItemId];
+            state.activeItemId = undefined;
             addToHistory(state, deleteSelected.type);
         },
         undo: (state) => {
@@ -104,22 +104,22 @@ export const canvasSlice = createSlice({
 function addToHistory(state: CanvasStoreState, action: string) {
     addHitory(state.history, action, {
         items: state.items,
-        activeItemKey: state.activeItemKey,
+        activeItemId: state.activeItemId,
     });
 }
 
 function setFromHistoryItems(state: CanvasStoreState, history: CanvasItems) {
     state.items = history.items;
-    state.activeItemKey = history.activeItemKey;
+    state.activeItemId = history.activeItemId;
     resetActive(state);
 }
 
 function resetActive(state: CanvasStoreState) {
-    if (!state.activeItemKey) {
+    if (!state.activeItemId) {
         return;
     }
-    state.items[state.activeItemKey].active = undefined;
-    state.activeItemKey = undefined;
+    state.items[state.activeItemId].active = undefined;
+    state.activeItemId = undefined;
 }
 
 function isSamePosition(a: CanvasItem, b: CanvasItem): boolean {
