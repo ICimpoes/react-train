@@ -16,34 +16,26 @@ export default function HistoryTree(
 
     const historyToTree = React.useCallback(
         (idx: number): RawNodeDatum => {
-            const now = new Date().getTime();
             const item = history.items[idx];
-            const node: RawNodeDatum = {
+            return {
                 name: item.action,
-                children: [],
+                children: history.nodes[idx].children.map(historyToTree),
                 attributes: {
                     idx: idx,
-                    time: timeDiff(now - item.time),
+                    time: timeDiff(item.time),
+                    current: idx == history.currentNode,
                 },
             };
-            if (idx === history.currentNode) {
-                node.attributes!["current"] = true;
-            }
-            for (const i of history.nodes[idx].children) {
-                node.children?.push(historyToTree(i));
-            }
-            return node;
         },
         [history, timeDiff]
     );
 
     const handleNodeClick = React.useCallback(
         (node: HierarchyPointNode<TreeNodeDatum>) => {
-            if (node.data.attributes === undefined) {
-                return;
+            const idx = node.data.attributes?.["idx"];
+            if (idx) {
+                dispatch(setFromHistory(Number(idx)));
             }
-            const idx = Number(node.data.attributes["idx"]);
-            dispatch(setFromHistory(idx));
         },
         [dispatch, setFromHistory]
     );
@@ -63,7 +55,9 @@ export default function HistoryTree(
     );
 }
 
-function timeDiff(diffMs: number): string {
+function timeDiff(timeMs: number): string {
+    const now = new Date().getTime();
+    const diffMs = now - timeMs;
     const diffSec = Math.round(diffMs / 1000);
     if (diffSec < 1) {
         return "0";
