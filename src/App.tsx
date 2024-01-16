@@ -9,30 +9,33 @@ export default function App() {
     const dispatch = useAppDispatch();
     const [hideHistory, setHideHistory] = useState(true);
 
-    const keyMap = {
-        d: () => {
-            dispatch(deleteSelected());
-        },
-        u: () => {
-            dispatch(undo());
-        },
-        r: () => {
-            dispatch(redo());
-        },
-        h: () => {
-            setHideHistory((current) => !current);
-        },
-    } as Record<string, () => void>;
+    const deleteItem = React.useCallback(() => {
+        dispatch(deleteSelected());
+    }, [dispatch, deleteSelected]);
+
+    const undoChange = React.useCallback(() => {
+        dispatch(undo());
+    }, [dispatch, undo]);
+
+    const redoChange = React.useCallback(() => {
+        dispatch(redo());
+    }, [dispatch, redo]);
+
+    const toggleHistory = React.useCallback(() => {
+        setHideHistory((current) => !current);
+    }, [setHideHistory]);
 
     const handleKeyUp = React.useCallback(
         (event: KeyboardEvent) => {
-            const action = keyMap[event.key];
-            if (action === undefined) {
-                return;
-            }
-            action();
+            const keyMap: Record<string, () => void> = {
+                d: deleteItem,
+                u: undoChange,
+                r: redoChange,
+                h: toggleHistory,
+            };
+            keyMap[event.key]?.();
         },
-        [keyMap]
+        [deleteItem, undoChange, redoChange, toggleHistory]
     );
 
     const handleMouseDown = React.useCallback(() => {
