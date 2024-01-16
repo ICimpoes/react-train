@@ -1,4 +1,4 @@
-export interface Item {
+interface Link {
     previous?: number;
     next: number[];
 }
@@ -9,7 +9,7 @@ export interface History<T> {
         time: number;
         action: string;
     }[];
-    links: Item[];
+    links: Link[];
     current: number;
 }
 
