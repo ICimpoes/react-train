@@ -50,3 +50,19 @@ body {
     fill: #dce8fa;
     stroke-width: 3px;
 }
+
+.svg-shape.active {
+    fill: #ff0000;
+}
+
+.history.tree {
+    width: 50em;
+    height: 100%;
+    position: absolute;
+    right: 0px;
+    z-index: 10;
+}
+
+.history.node>circle {
+    fill: green;
+}

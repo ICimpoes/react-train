@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Point } from "./models";
 
 export const Shapes = {
@@ -13,13 +13,14 @@ export const ShapeTypes: ShapeType[] = Object.keys(Shapes) as ShapeType[];
 
 interface ShapeProps {
     point: Point;
-    onMouseDown?: () => void;
+    className: string;
+    onMouseDown?: (e: MouseEvent) => void;
 }
 
 function Circle(props: ShapeProps): React.JSX.Element {
     return (
         <circle
-            className="svg-shape"
+            className={props.className}
             onMouseDown={props.onMouseDown}
             cx={props.point.x}
             cy={props.point.y}
@@ -31,7 +32,7 @@ function Circle(props: ShapeProps): React.JSX.Element {
 function Square(props: ShapeProps): React.JSX.Element {
     return (
         <rect
-            className="svg-shape"
+            className={props.className}
             onMouseDown={props.onMouseDown}
             x={props.point.x - 20}
             y={props.point.y - 20}
@@ -49,7 +50,7 @@ function Triangle(props: ShapeProps): React.JSX.Element {
 
     return (
         <polygon
-            className="svg-shape"
+            className={props.className}
             onMouseDown={props.onMouseDown}
             points={calculatePoints(props.point)}
         />
